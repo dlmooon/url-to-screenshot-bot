@@ -76,8 +76,11 @@ public class WebScreenshoter {
     private void prepareWebDriver() {
         ChromeOptions options = new ChromeOptions();
 
-        options.addArguments("--start-fullscreen");
-        options.addArguments("--disable-infobars");
+        options.setBinary("/app/.apt/usr/bin/google-chrome");
+        options.addArguments("--enable-javascript");
+        options.addArguments("--headless");
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
 
         webDriver = new ChromeDriver(options);
 
