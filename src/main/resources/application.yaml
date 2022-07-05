@@ -1,0 +1,16 @@
+telegram:
+  api-url: "https://api.telegram.org/"
+  # webhook-path: "https://189b-145-255-8-181.eu.ngrok.io"
+  webhook-path: "https://url-to-screenshot-bot.herokuapp.com"
+  bot-username: "URL_To_Screenshot_Bot"
+  bot-token: "5403668618:AAGwS7V6cXgCZ-Me4QKws-6vr8rp89cu4Yg"
+
+spring:
+  output:
+    ansi:
+      enabled: "always"
+
+logging:
+  level:
+    root: "INFO"
+
