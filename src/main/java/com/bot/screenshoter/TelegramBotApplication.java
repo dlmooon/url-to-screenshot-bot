@@ -1,12 +1,13 @@
 package com.bot.screenshoter;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class TelegramBotApplication {
     public static void main(String[] args) {
-        System.setProperty("webdriver.chrome.driver","/app/.chromedriver/bin/chromedriver");
+        WebDriverManager.chromedriver().setup();
         SpringApplication.run(TelegramBotApplication.class, args);
     }
 }
