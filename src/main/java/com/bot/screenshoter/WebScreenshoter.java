@@ -76,7 +76,7 @@ public class WebScreenshoter {
     private void prepareWebDriver() {
         ChromeOptions options = new ChromeOptions();
 
-        options.setBinary("/app/.apt/usr/bin/google-chrome");
+        options.setBinary("/app/.chromedriver/bin/chromedriver");
         options.addArguments("--enable-javascript");
         options.addArguments("--headless");
         options.addArguments("--disable-gpu");
