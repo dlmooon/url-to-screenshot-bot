@@ -1,6 +1,5 @@
 package com.bot.screenshoter.telegram.facade.handlers;
 
-import com.bot.screenshoter.keyboards.InlineKeyboardMaker;
 import com.bot.screenshoter.keyboards.ReplyKeyboardMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,5 @@
 package com.bot.screenshoter.constants;
 
-
 public enum ReplyButtonNameEnum {
 
     TAKE_SCREENSHOT_BUTTON (EmojiEnum.CAMERA.get()  + " Сделать скриншот"),
