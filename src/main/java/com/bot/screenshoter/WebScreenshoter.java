@@ -74,15 +74,17 @@ public class WebScreenshoter {
 
     @PostConstruct
     private void prepareWebDriver() {
-        ChromeOptions options = new ChromeOptions();
+//        ChromeOptions options = new ChromeOptions();
+//
+//        options.setBinary("/app/.chromedriver/bin/chromedriver");
+//        options.addArguments("--enable-javascript");
+//        options.addArguments("--headless");
+//        options.addArguments("--disable-gpu");
+//        options.addArguments("--no-sandbox");
+//
+//        webDriver = new ChromeDriver(options);
 
-        options.setBinary("/app/.chromedriver/bin/chromedriver");
-        options.addArguments("--enable-javascript");
-        options.addArguments("--headless");
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-
-        webDriver = new ChromeDriver(options);
+        webDriver = new ChromeDriver();
 
         log.debug("Web driver is prepared");
     }
