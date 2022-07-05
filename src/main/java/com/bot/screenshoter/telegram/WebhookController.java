@@ -27,6 +27,6 @@ public class WebhookController {
 
     @GetMapping
     public ResponseEntity<String> ok() {
-        return new ResponseEntity<String>("Working", HttpStatus.OK);
+        return new ResponseEntity<>("Working", HttpStatus.OK);
     }
 }
