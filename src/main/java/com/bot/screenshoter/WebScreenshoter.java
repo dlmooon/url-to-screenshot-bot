@@ -22,7 +22,7 @@ public class WebScreenshoter {
 
     private WebDriver webDriver;
 
-    public File takeSimpleScreenshot(String url) {
+    public synchronized File takeSimpleScreenshot(String url) {
         log.info("Take a simple screenshot");
 
         webDriver.get(url);
@@ -30,15 +30,15 @@ public class WebScreenshoter {
         return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
     }
 
-    public File takeLongScreenshot(String url) {
+    public synchronized File takeLongScreenshot(String url) {
         log.info("Take a long screenshot");
 
         webDriver.get(url);
-        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(1)).takeScreenshot(webDriver);
+        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10)).takeScreenshot(webDriver);
         return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
     }
 
-    public File takeCustomScreenshot(String url, Dimension dimension) {
+    public synchronized File takeCustomScreenshot(String url, Dimension dimension) {
         log.info("Take a custom screenshot");
 
         webDriver.get(url);
@@ -50,7 +50,7 @@ public class WebScreenshoter {
         return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
     }
 
-    public File takeScreenshotWithScaling(String url, float dpr) {
+    public synchronized File takeScreenshotWithScaling(String url, float dpr) {
         log.info("take a screenshot with scaling");
         webDriver.get(url);
         Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.scaling(dpr)).takeScreenshot(webDriver);
