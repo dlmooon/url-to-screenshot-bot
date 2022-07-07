@@ -23,17 +23,18 @@ public class WebScreenshoter {
 
     public File takeSimpleScreenshot(String url) {
         log.info("Take a simple screenshot");
-        webDriver.manage().window().fullscreen();
+
         webDriver.get(url);
         Screenshot screenshot = new AShot().takeScreenshot(webDriver);
-        return getFileFromBufferedImage(screenshot.getImage());
+        return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
     }
 
     public File takeLongScreenshot(String url) {
         log.info("Take a long screenshot");
+
         webDriver.get(url);
         Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(1)).takeScreenshot(webDriver);
-        return getFileFromBufferedImage(screenshot.getImage());
+        return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
     }
 
     public File takeCustomScreenshot(String url, Dimension dimension) {
@@ -45,22 +46,18 @@ public class WebScreenshoter {
         Screenshot screenshot = new AShot().takeScreenshot(webDriver);
 
         webDriver.manage().window().fullscreen();
-        return getFileFromBufferedImage(screenshot.getImage());
+        return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
     }
 
     public File takeScreenshotWithScaling(String url, float dpr) {
         log.info("take a screenshot with scaling");
         webDriver.get(url);
         Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.scaling(dpr)).takeScreenshot(webDriver);
-        return getFileFromBufferedImage(screenshot.getImage());
+        return getFileFromBufferedImage(screenshot.getImage(), "scaling-screenshot");
     }
 
-    public File take(String url) {
-        return new File("");
-    }
-
-    private File getFileFromBufferedImage(BufferedImage image) {
-        File file = new File("screenshot.png");
+    private File getFileFromBufferedImage(BufferedImage image, String name) {
+        File file = new File(name + ".png");
 
         try {
             ImageIO.write(image, "PNG", file);
