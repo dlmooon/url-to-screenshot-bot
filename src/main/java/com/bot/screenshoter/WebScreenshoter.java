@@ -25,17 +25,25 @@ public class WebScreenshoter {
     public synchronized File takeSimpleScreenshot(String url) {
         log.info("Take a simple screenshot");
 
-        webDriver.get(url);
-        Screenshot screenshot = new AShot().takeScreenshot(webDriver);
-        return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
+        if (url != null) {
+            webDriver.get(url);
+            Screenshot screenshot = new AShot().takeScreenshot(webDriver);
+            return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
+        }
+        log.warn("Url is null!");
+        return null;
     }
 
     public synchronized File takeLongScreenshot(String url) {
         log.info("Take a long screenshot");
 
-        webDriver.get(url);
-        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10)).takeScreenshot(webDriver);
-        return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
+        if (url != null) {
+            webDriver.get(url);
+            Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10)).takeScreenshot(webDriver);
+            return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
+        }
+        log.warn("Url is null!");
+        return null;
     }
 
     public synchronized File takeCustomScreenshot(String url, Dimension dimension) {
