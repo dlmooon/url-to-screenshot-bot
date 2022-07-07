@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
@@ -70,8 +71,9 @@ public class WebScreenshoter {
 
     @PostConstruct
     private void prepareAndRunWebDriver() {
-        webDriver = new ChromeDriver();
-        webDriver.manage().window().setSize(new Dimension(1920, 1080));
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("window-size=1920,1080");
+        webDriver = new ChromeDriver(options);
 
         log.info("Web driver is prepared and running");
     }
