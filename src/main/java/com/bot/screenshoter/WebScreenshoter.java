@@ -71,7 +71,7 @@ public class WebScreenshoter {
     @PostConstruct
     private void prepareAndRunWebDriver() {
         webDriver = new ChromeDriver();
-        webDriver.manage().window().maximize();
+        webDriver.manage().window().setSize(new Dimension(1920, 1080));
 
         log.info("Web driver is prepared and running");
     }
