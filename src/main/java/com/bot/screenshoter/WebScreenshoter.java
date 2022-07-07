@@ -2,9 +2,11 @@ package com.bot.screenshoter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
@@ -20,6 +22,8 @@ import java.io.IOException;
 @Slf4j
 public class WebScreenshoter {
 
+    private final long PAGE_LOAD_TIMEOUT = 5;
+
     private WebDriver webDriver;
 
     public synchronized File takeSimpleScreenshot(String url) {
@@ -27,6 +31,7 @@ public class WebScreenshoter {
 
         if (url != null) {
             webDriver.get(url);
+            waitPageLoad();
             Screenshot screenshot = new AShot().takeScreenshot(webDriver);
             return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
         }
@@ -39,6 +44,7 @@ public class WebScreenshoter {
 
         if (url != null) {
             webDriver.get(url);
+            waitPageLoad();
             Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10)).takeScreenshot(webDriver);
             return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
         }
@@ -65,13 +71,17 @@ public class WebScreenshoter {
         return getFileFromBufferedImage(screenshot.getImage(), "scaling-screenshot");
     }
 
+    private void waitPageLoad() {
+        new WebDriverWait(webDriver, PAGE_LOAD_TIMEOUT).until(webDriver -> ((JavascriptExecutor)webDriver).executeScript("return document.readyState").equals("complete"));
+    }
+
     private File getFileFromBufferedImage(BufferedImage image, String name) {
         File file = new File(name + ".png");
 
         try {
             ImageIO.write(image, "PNG", file);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            log.warn(e.toString());
         }
 
         return file;
