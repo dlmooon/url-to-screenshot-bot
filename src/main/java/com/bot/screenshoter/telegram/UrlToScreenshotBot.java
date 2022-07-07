@@ -52,7 +52,7 @@ public class UrlToScreenshotBot extends SpringWebhookBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.warn(e.toString());
         }
     }
 
@@ -60,7 +60,7 @@ public class UrlToScreenshotBot extends SpringWebhookBot {
         try {
             execute(document);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.warn(e.toString());
         }
     }
 
