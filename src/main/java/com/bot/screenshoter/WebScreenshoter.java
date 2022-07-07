@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
@@ -73,19 +72,10 @@ public class WebScreenshoter {
     }
 
     @PostConstruct
-    private void prepareWebDriver() {
-//        ChromeOptions options = new ChromeOptions();
-//
-//        options.setBinary("/app/.chromedriver/bin/chromedriver");
-//        options.addArguments("--enable-javascript");
-//        options.addArguments("--headless");
-//        options.addArguments("--disable-gpu");
-//        options.addArguments("--no-sandbox");
-//
-//        webDriver = new ChromeDriver(options);
-
+    private void prepareAndRunWebDriver() {
         webDriver = new ChromeDriver();
+        webDriver.manage().window().maximize();
 
-        log.debug("Web driver is prepared");
+        log.info("Web driver is prepared and running");
     }
 }
