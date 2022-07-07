@@ -58,7 +58,7 @@ public class WebScreenshoter {
     }
 
     private File getFileFromBufferedImage(BufferedImage image, String name) {
-        File file = new File(name);
+        File file = new File(name + ".png");
 
         try {
             ImageIO.write(image, "PNG", file);
