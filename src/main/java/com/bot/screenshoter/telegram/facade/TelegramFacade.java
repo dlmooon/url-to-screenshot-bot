@@ -28,7 +28,7 @@ public class TelegramFacade {
         if (update.hasCallbackQuery()) {
             CallbackQuery callbackQuery = update.getCallbackQuery();
             return callbackQueryHandler.processCallback(callbackQuery);
-        } else {
+        } else if (update.hasMessage()) {
             Message message = update.getMessage();
             if (message.getText().startsWith("/")) {
                 return commandHandler.processCommand(message);
@@ -36,5 +36,7 @@ public class TelegramFacade {
                 return messageHandler.processMessage(message);
             }
         }
+
+        return null;
     }
 }
