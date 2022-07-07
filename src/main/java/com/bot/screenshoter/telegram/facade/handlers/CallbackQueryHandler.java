@@ -38,11 +38,11 @@ public class CallbackQueryHandler {
         deleteInlineKeyboard(chatID, callbackQuery.getMessage().getMessageId());
         switch (button) {
             case SIMPLE_SCREENSHOT_BUTTON:
-                sendSimpleScreenshot(chatID, callbackQuery.getFrom().getId());
+                sendSimpleScreenshot(chatID, urlCache.getRequestUrl(chatID));
                 return null;
 
             case LONG_SCREENSHOT_BUTTON:
-                sendLongScreenshot(chatID, callbackQuery.getFrom().getId());
+                sendLongScreenshot(chatID, urlCache.getRequestUrl(chatID));
                 return null;
 
             case CUSTOM_SCREENSHOT_BUTTON:
@@ -60,24 +60,24 @@ public class CallbackQueryHandler {
         bot.deleteMessage(message);
     }
 
-    private void sendSimpleScreenshot(String chatID, Long userID) {
+    private void sendSimpleScreenshot(String chatID, String url) {
         SendDocument document = new SendDocument();
         document.setChatId(chatID);
-        document.setDocument(new InputFile(webScreenshoter.takeSimpleScreenshot(urlCache.getRequestUrl(chatID))));
+        document.setDocument(new InputFile(webScreenshoter.takeSimpleScreenshot(url)));
         bot.sendDocument(document);
     }
 
-    private void sendLongScreenshot(String chatID, Long userID) {
+    private void sendLongScreenshot(String chatID, String url) {
         SendDocument document = new SendDocument();
         document.setChatId(chatID);
-        document.setDocument(new InputFile(webScreenshoter.takeLongScreenshot(urlCache.getRequestUrl(chatID))));
+        document.setDocument(new InputFile(webScreenshoter.takeLongScreenshot(url)));
         bot.sendDocument(document);
     }
 
-    private void sendCustomScreenshot(String chatID, Long userID) {
+    private void sendCustomScreenshot(String chatID, String url) {
         SendDocument document = new SendDocument();
         document.setChatId(chatID);
-        document.setDocument(new InputFile(webScreenshoter.takeCustomScreenshot(urlCache.getRequestUrl(chatID), new Dimension(900, 550))));
+        document.setDocument(new InputFile(webScreenshoter.takeCustomScreenshot(url, new Dimension(900, 550))));
         bot.sendDocument(document);
     }
 }
