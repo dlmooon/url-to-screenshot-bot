@@ -80,7 +80,13 @@ public class WebScreenshoter {
     @PostConstruct
     private void prepareAndRunWebDriver() {
         ChromeOptions options = new ChromeOptions();
+
+        options.addArguments("--disable-infobars");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-browser-side-navigation");
+        options.addArguments("--disable-features=VizDisplayCompositor");
         options.addArguments("window-size=1920,1080");
+
         webDriver = new ChromeDriver(options);
 
         log.info("Web driver is prepared and running");
