@@ -72,7 +72,7 @@ public class WebScreenshoter {
     }
 
     private void waitPageLoad() {
-        new WebDriverWait(webDriver, PAGE_LOAD_TIMEOUT).until(webDriver -> ((JavascriptExecutor)webDriver).executeScript("return document.readyState").equals("complete"));
+        new WebDriverWait(webDriver, PAGE_LOAD_TIMEOUT);
     }
 
     private File getFileFromBufferedImage(BufferedImage image, String name) {
