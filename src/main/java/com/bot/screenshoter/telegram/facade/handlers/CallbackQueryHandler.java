@@ -29,9 +29,6 @@ public class CallbackQueryHandler {
     @Autowired
     RequestUrlCache urlCache;
 
-    @Autowired
-    ReplyKeyboardMaker replyKeyboardMaker;
-
     public BotApiMethod<?> processCallback(CallbackQuery callbackQuery) {
         String chatID = callbackQuery.getMessage().getChatId().toString();
         InlineButtonNameEnum button = InlineButtonNameEnum.convert(callbackQuery.getData());
@@ -51,7 +48,7 @@ public class CallbackQueryHandler {
                 return null;
 
             default:
-                return new SendMessage(chatID, "Я не понимаю");
+                return new SendMessage(chatID, "Что-то пошло не так, попробуйте еще раз");
         }
     }
 

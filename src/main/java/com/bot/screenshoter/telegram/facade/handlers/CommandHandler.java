@@ -30,7 +30,8 @@ public class CommandHandler {
                 return message1;
 
             default:
-                return new SendMessage(chatID, "Что-то пошло не так, попробуйте еще раз");
+                return new SendMessage(chatID, "Неизвестная команда: " + message.getText() + ".\n" +
+                                                    "Используйте /help для получения актуальных команд.");
         }
     }
 }
