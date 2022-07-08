@@ -3,26 +3,22 @@ package com.bot.screenshoter.telegram.facade;
 import com.bot.screenshoter.telegram.facade.handlers.CallbackQueryHandler;
 import com.bot.screenshoter.telegram.facade.handlers.CommandHandler;
 import com.bot.screenshoter.telegram.facade.handlers.MessageHandler;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
+@Slf4j
 @Component
+@AllArgsConstructor
 public class TelegramFacade {
 
     MessageHandler messageHandler;
     CommandHandler commandHandler;
     CallbackQueryHandler callbackQueryHandler;
-
-    @Autowired
-    public TelegramFacade(MessageHandler messageHandler, CommandHandler commandHandler, CallbackQueryHandler callbackQueryHandler) {
-        this.messageHandler = messageHandler;
-        this.commandHandler = commandHandler;
-        this.callbackQueryHandler = callbackQueryHandler;
-    }
 
     public BotApiMethod<?> handleUpdate(Update update) {
         if (update.hasCallbackQuery()) {
@@ -37,6 +33,7 @@ public class TelegramFacade {
             }
         }
 
+        log.warn("Update from id {} does not contain callbackQuery and message", update.getMessage().getFrom().getId());
         return null;
     }
 }
