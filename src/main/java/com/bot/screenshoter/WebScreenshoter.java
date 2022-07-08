@@ -17,6 +17,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @Slf4j
@@ -72,7 +73,7 @@ public class WebScreenshoter {
     }
 
     private void waitPageLoad() {
-        new WebDriverWait(webDriver, PAGE_LOAD_TIMEOUT);
+        webDriver.manage().timeouts().implicitlyWait(PAGE_LOAD_TIMEOUT, TimeUnit.SECONDS);
     }
 
     private File getFileFromBufferedImage(BufferedImage image, String name) {
