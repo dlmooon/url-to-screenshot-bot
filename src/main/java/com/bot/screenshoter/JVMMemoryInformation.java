@@ -9,13 +9,14 @@ import org.springframework.stereotype.Component;
 public class JVMMemoryInformation {
 
     private Runtime runtime;
-    private final int mb = 1024*1024;
+    private final int MB = 1024*1024;
+    private final int COUNT_MINUTES = 10;
 
-    @Scheduled(fixedRate = 300_000)
+    @Scheduled(fixedRate = COUNT_MINUTES * 60 * 1000)
     public void printInformation() {
         runtime = Runtime.getRuntime();
 
-        log.info("##### JVM memory information [MB] #####");
+        log.info("### JVM memory information [MB] ###");
         printUsedMemory();
         printFreeMemory();
         printTotalMemory();
@@ -23,18 +24,18 @@ public class JVMMemoryInformation {
     }
 
     private void printUsedMemory() {
-        log.info("Used memory: {}", (runtime.totalMemory() - runtime.freeMemory()) / mb);
+        log.info("Used memory: {}", (runtime.totalMemory() - runtime.freeMemory()) / MB);
     }
 
     private void printFreeMemory() {
-        log.info("Free memory: {}", runtime.freeMemory() / mb);
+        log.info("Free memory: {}", runtime.freeMemory() / MB);
     }
 
     private void printTotalMemory() {
-        log.info("Total memory: {}", runtime.totalMemory() / mb);
+        log.info("Total memory: {}", runtime.totalMemory() / MB);
     }
 
     private void printMaxMemory() {
-        log.info("Max memory: {}", runtime.maxMemory() / mb);
+        log.info("Max memory: {}", runtime.maxMemory() / MB);
     }
 }
