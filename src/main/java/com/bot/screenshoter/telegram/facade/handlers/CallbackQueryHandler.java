@@ -2,7 +2,6 @@ package com.bot.screenshoter.telegram.facade.handlers;
 
 import com.bot.screenshoter.WebScreenshoter;
 import com.bot.screenshoter.constants.InlineButtonNameEnum;
-import com.bot.screenshoter.keyboards.ReplyKeyboardMaker;
 import com.bot.screenshoter.repositories.RequestUrlCache;
 import com.bot.screenshoter.telegram.UrlToScreenshotBot;
 import org.openqa.selenium.Dimension;
@@ -43,8 +42,7 @@ public class CallbackQueryHandler {
                 return null;
 
             case CUSTOM_SCREENSHOT_BUTTON:
-//                sendCustomScreenshot(chatID, callbackQuery.getFrom().getId());
-                // TODO: 30.06.2022 кастомный скриншот работает немного неправильно, а именно, после него размер браузера не приходит в обратное состояние
+                sendCustomScreenshot(chatID, urlCache.getRequestUrl(chatID));
                 return null;
 
             default:
