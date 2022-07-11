@@ -12,7 +12,7 @@ public enum EmojiEnum {
     CROWN   ("\uD83D\uDC51"),
     CAP     ("\uD83E\uDDE2"),
     CANCEL  ("\u274C"),
-    CONFIRM ("\u2714\uFE0F"),
+    CONFIRM ("\u2705"),
     GEAR    ("\u2699");
 
     private final String emoji;
