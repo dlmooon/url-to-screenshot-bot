@@ -57,8 +57,8 @@ public class MessageHandler {
     }
 
     private BotApiMethod<?> processMessageFromUser(Message message) {
-        BotStateEnum botState = stateRepo.getUsersBotState(message.getChatId().toString());
         String chatID = message.getChatId().toString();
+        BotStateEnum botState = stateRepo.getUsersBotState(chatID);
 
         switch (botState) {
             case ASK_URL:
@@ -76,6 +76,10 @@ public class MessageHandler {
                 String[] mas = message.getText().split("x");
                 Dimension dimension = new Dimension(Integer.parseInt(mas[0].trim()), Integer.parseInt(mas[1].trim()));
                 dimensionCache.addRequestDimension(chatID, dimension);
+                SendMessage message1 = new SendMessage(chatID, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" +
+                                                                    "Подтвердить действие?");
+                message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForConfirmOrCancel());
+                return message1;
 
             default:
                 return new SendMessage(chatID, "Я вас не понимаю");
