@@ -5,7 +5,9 @@ import com.bot.screenshoter.constants.EmojiEnum;
 import com.bot.screenshoter.constants.ReplyButtonNameEnum;
 import com.bot.screenshoter.keyboards.InlineKeyboardMaker;
 import com.bot.screenshoter.repositories.BotStateRepo;
+import com.bot.screenshoter.repositories.RequestDimensionCache;
 import com.bot.screenshoter.repositories.RequestUrlCache;
+import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -19,10 +21,13 @@ public class MessageHandler {
     InlineKeyboardMaker inlineKeyboardMaker;
 
     @Autowired
-    BotStateRepo botStateRepo;
+    BotStateRepo stateRepo;
 
     @Autowired
     RequestUrlCache urlCache;
+
+    @Autowired
+    RequestDimensionCache dimensionCache;
 
     public BotApiMethod<?> processMessage(Message message) {
         String inputText = message.getText();
@@ -40,7 +45,7 @@ public class MessageHandler {
 
         switch (button) {
             case TAKE_SCREENSHOT_BUTTON:
-                botStateRepo.setUsersBotState(chatID, BotStateEnum.ASK_URL);
+                stateRepo.setUsersBotState(chatID, BotStateEnum.ASK_URL);
                 return new SendMessage(chatID, "Введите URL сайта");
 
             case ABOUT_BUTTON:
@@ -52,20 +57,25 @@ public class MessageHandler {
     }
 
     private BotApiMethod<?> processMessageFromUser(Message message) {
-        BotStateEnum botState = botStateRepo.getUsersBotState(message.getChatId().toString());
+        BotStateEnum botState = stateRepo.getUsersBotState(message.getChatId().toString());
         String chatID = message.getChatId().toString();
 
         switch (botState) {
             case ASK_URL:
                 urlCache.addRequestUrl(chatID, message.getText());
 
-                botStateRepo.setUsersBotState(chatID, BotStateEnum.ASK_TYPE_SCREENSHOT);
+                stateRepo.setUsersBotState(chatID, BotStateEnum.ASK_TYPE_SCREENSHOT);
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setText("Выберите тип скриншота:");
                 sendMessage.setChatId(chatID);
                 sendMessage.setReplyMarkup(inlineKeyboardMaker.getKeyboardForSelectTypeScreenshot());
 
                 return sendMessage;
+
+            case ASK_DIMENSION:
+                String[] mas = message.getText().split("x");
+                Dimension dimension = new Dimension(Integer.parseInt(mas[0]), Integer.parseInt(mas[1]));
+                dimensionCache.addRequestDimension(chatID, dimension);
 
             default:
                 return new SendMessage(chatID, "Я вас не понимаю");
