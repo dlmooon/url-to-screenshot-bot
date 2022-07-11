@@ -1,7 +1,10 @@
 package com.bot.screenshoter.telegram.facade.handlers;
 
 import com.bot.screenshoter.WebScreenshoter;
+import com.bot.screenshoter.constants.BotStateEnum;
 import com.bot.screenshoter.constants.InlineButtonNameEnum;
+import com.bot.screenshoter.repositories.BotStateRepo;
+import com.bot.screenshoter.repositories.RequestDimensionCache;
 import com.bot.screenshoter.repositories.RequestUrlCache;
 import com.bot.screenshoter.telegram.UrlToScreenshotBot;
 import org.openqa.selenium.Dimension;
@@ -28,6 +31,12 @@ public class CallbackQueryHandler {
     @Autowired
     RequestUrlCache urlCache;
 
+    @Autowired
+    RequestDimensionCache dimensionCache;
+
+    @Autowired
+    BotStateRepo stateRepo;
+
     public BotApiMethod<?> processCallback(CallbackQuery callbackQuery) {
         String chatID = callbackQuery.getMessage().getChatId().toString();
         InlineButtonNameEnum button = InlineButtonNameEnum.convert(callbackQuery.getData());
@@ -42,8 +51,17 @@ public class CallbackQueryHandler {
                 return null;
 
             case CUSTOM_SCREENSHOT_BUTTON:
-                sendCustomScreenshot(chatID, urlCache.getRequestUrl(chatID));
+                stateRepo.setUsersBotState(chatID, BotStateEnum.ASK_DIMENSION);
+                return new SendMessage(chatID, "Введите разрешение скриншота в формате: ширина x высота \n" +
+                                                    "(пример: 1920 x 1080)");
+
+            case CONFIRM_BUTTON:
+                sendCustomScreenshot(chatID, urlCache.getRequestUrl(chatID), dimensionCache.getRequestDimension(chatID));
                 return null;
+
+            case CANCEL_BUTTON:
+                stateRepo.setUsersBotState(chatID, BotStateEnum.SHOW_MENU);
+                return new SendMessage(chatID, "Действие отменено");
 
             default:
                 return new SendMessage(chatID, "Что-то пошло не так, попробуйте еще раз");
@@ -69,10 +87,10 @@ public class CallbackQueryHandler {
         bot.sendDocument(document);
     }
 
-    private void sendCustomScreenshot(String chatID, String url) {
+    private void sendCustomScreenshot(String chatID, String url, Dimension dimension) {
         SendDocument document = new SendDocument();
         document.setChatId(chatID);
-        document.setDocument(new InputFile(webScreenshoter.takeCustomScreenshot(url, new Dimension(900, 550))));
+        document.setDocument(new InputFile(webScreenshoter.takeCustomScreenshot(url, dimension)));
         bot.sendDocument(document);
     }
 }
