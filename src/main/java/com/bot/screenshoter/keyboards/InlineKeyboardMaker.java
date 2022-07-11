@@ -17,7 +17,7 @@ public class InlineKeyboardMaker {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         keyboard.add(getButton(InlineButtonNameEnum.SIMPLE_SCREENSHOT_BUTTON.getText(), InlineButtonNameEnum.SIMPLE_SCREENSHOT_BUTTON.name()));
         keyboard.add(getButton(InlineButtonNameEnum.LONG_SCREENSHOT_BUTTON.getText(), InlineButtonNameEnum.LONG_SCREENSHOT_BUTTON.name()));
-        //keyboard.add(getButton(InlineButtonNameEnum.CUSTOM_SCREENSHOT_BUTTON.getText(), InlineButtonNameEnum.CUSTOM_SCREENSHOT_BUTTON.name()));
+        keyboard.add(getButton(InlineButtonNameEnum.CUSTOM_SCREENSHOT_BUTTON.getText(), InlineButtonNameEnum.CUSTOM_SCREENSHOT_BUTTON.name()));
 
         keyboardMarkup.setKeyboard(keyboard);
 
