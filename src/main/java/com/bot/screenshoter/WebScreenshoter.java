@@ -52,13 +52,16 @@ public class WebScreenshoter {
     public synchronized File takeCustomScreenshot(String url, Dimension dimension) {
         log.info("Take a custom screenshot");
 
-        webDriver.get(url);
-        webDriver.manage().window().setSize(dimension);
-
-        Screenshot screenshot = new AShot().takeScreenshot(webDriver);
-
-        webDriver.manage().window().setSize(new Dimension(1920,1080));
-        return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
+        if (url != null) {
+            webDriver.get(url);
+            waitPageLoad();
+            webDriver.manage().window().setSize(dimension);
+            Screenshot screenshot = new AShot().takeScreenshot(webDriver);
+            webDriver.manage().window().setSize(new Dimension(1920, 1080));
+            return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
+        }
+        log.warn("Url is null!");
+        return null;
     }
 
     public synchronized File takeScreenshotWithScaling(String url, float dpr) {
