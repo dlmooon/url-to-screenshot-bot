@@ -74,7 +74,7 @@ public class MessageHandler {
 
             case ASK_DIMENSION:
                 String[] mas = message.getText().split("x");
-                Dimension dimension = new Dimension(Integer.parseInt(mas[0]), Integer.parseInt(mas[1]));
+                Dimension dimension = new Dimension(Integer.parseInt(mas[0].trim()), Integer.parseInt(mas[1].trim()));
                 dimensionCache.addRequestDimension(chatID, dimension);
 
             default:
