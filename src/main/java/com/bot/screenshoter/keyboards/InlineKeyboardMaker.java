@@ -24,6 +24,18 @@ public class InlineKeyboardMaker {
         return keyboardMarkup;
     }
 
+    public InlineKeyboardMarkup getKeyboardForConfirmOrCancel() {
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        keyboard.add(getButton(InlineButtonNameEnum.CONFIRM_BUTTON.getText(), InlineButtonNameEnum.CONFIRM_BUTTON.name()));
+        keyboard.add(getButton(InlineButtonNameEnum.CANCEL_BUTTON.getText(), InlineButtonNameEnum.CANCEL_BUTTON.name()));
+
+        keyboardMarkup.setKeyboard(keyboard);
+
+        return keyboardMarkup;
+    }
+
     private List<InlineKeyboardButton> getButton(String text, String callbackData) {
         InlineKeyboardButton button = new InlineKeyboardButton();
         button.setText(text);
