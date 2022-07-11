@@ -2,11 +2,9 @@ package com.bot.screenshoter;
 
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
@@ -22,8 +20,6 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Slf4j
 public class WebScreenshoter {
-
-    private final long PAGE_LOAD_TIMEOUT = 5;
 
     private WebDriver webDriver;
 
@@ -61,7 +57,7 @@ public class WebScreenshoter {
 
         Screenshot screenshot = new AShot().takeScreenshot(webDriver);
 
-        webDriver.manage().window().fullscreen();
+        webDriver.manage().window().setSize(new Dimension(1920,1080));
         return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
     }
 
@@ -73,7 +69,8 @@ public class WebScreenshoter {
     }
 
     private void waitPageLoad() {
-        webDriver.manage().timeouts().implicitlyWait(PAGE_LOAD_TIMEOUT, TimeUnit.SECONDS);
+//        long PAGE_LOAD_TIMEOUT = 5;
+//        webDriver.manage().timeouts().implicitlyWait(PAGE_LOAD_TIMEOUT, TimeUnit.SECONDS);
     }
 
     private File getFileFromBufferedImage(BufferedImage image, String name) {
