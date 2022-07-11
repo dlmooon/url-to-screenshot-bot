@@ -11,6 +11,8 @@ public enum EmojiEnum {
     TAPE    ("\uD83C\uDF9E"),
     CROWN   ("\uD83D\uDC51"),
     CAP     ("\uD83E\uDDE2"),
+    CANCEL  ("\u274C"),
+    CONFIRM ("\u2714\uFE0F"),
     GEAR    ("\u2699");
 
     private final String emoji;
