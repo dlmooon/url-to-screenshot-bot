@@ -15,7 +15,8 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 @Component
 @Slf4j
@@ -26,14 +27,15 @@ public class WebScreenshoter {
     public synchronized File takeSimpleScreenshot(String url) {
         log.info("Take a simple screenshot");
 
-        if (url != null) {
+        if (isPageExist(url)) {
             webDriver.get(url);
             waitPageLoad();
-            Screenshot screenshot = new AShot().takeScreenshot(webDriver);
-            return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
+        } else {
+            return null;
         }
-        log.warn("Url is null!");
-        return null;
+
+        Screenshot screenshot = new AShot().takeScreenshot(webDriver);
+        return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
     }
 
     public synchronized File takeLongScreenshot(String url) {
@@ -74,6 +76,16 @@ public class WebScreenshoter {
     private void waitPageLoad() {
 //        long PAGE_LOAD_TIMEOUT = 5;
 //        webDriver.manage().timeouts().implicitlyWait(PAGE_LOAD_TIMEOUT, TimeUnit.SECONDS);
+    }
+
+    private boolean isPageExist(String url) {
+        try {
+            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestMethod("HEAD");
+            return connection.getResponseCode() == HttpURLConnection.HTTP_OK;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     private File getFileFromBufferedImage(BufferedImage image, String name) {
