@@ -54,7 +54,8 @@ public class CallbackQueryHandler {
 
             case CUSTOM_SCREENSHOT_BUTTON:
                 stateRepo.setUsersBotState(chatID, BotStateEnum.ASK_DIMENSION);
-                return new SendMessage(chatID, "Введите разрешение скриншота в формате: ширина x высота \n" +
+                return new SendMessage(chatID, "Введите разрешение скриншота в формате:\n" +
+                        "ширина x высота\n" +
                         "(пример: 1920 x 1080)");
 
             case CONFIRM_BUTTON:
@@ -86,17 +87,23 @@ public class CallbackQueryHandler {
     }
 
     private void sendLongScreenshot(String chatID, String url) {
-        SendDocument document = new SendDocument();
-        document.setChatId(chatID);
-        document.setDocument(new InputFile(webScreenshoter.takeLongScreenshot(url)));
-        bot.sendDocument(document);
+        File file = webScreenshoter.takeLongScreenshot(url);
+        if (file == null) {
+            bot.sendMessage(new SendMessage(chatID, "Страница не доступна или не существует"));
+        } else {
+            InputFile screenshot = new InputFile(file);
+            sendDocument(chatID, screenshot);
+        }
     }
 
     private void sendCustomScreenshot(String chatID, String url, Dimension dimension) {
-        SendDocument document = new SendDocument();
-        document.setChatId(chatID);
-        document.setDocument(new InputFile(webScreenshoter.takeCustomScreenshot(url, dimension)));
-        bot.sendDocument(document);
+        File file = webScreenshoter.takeCustomScreenshot(url, dimension);
+        if (file == null) {
+            bot.sendMessage(new SendMessage(chatID, "Страница не доступна или не существует"));
+        } else {
+            InputFile screenshot = new InputFile(file);
+            sendDocument(chatID, screenshot);
+        }
     }
 
     private void sendDocument(String chatID, InputFile screenshot) {
