@@ -84,6 +84,7 @@ public class WebScreenshoter {
 
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
+            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36");
             connection.setRequestMethod("HEAD");
             return connection.getResponseCode() == HttpURLConnection.HTTP_OK;
         } catch (IOException e) {
