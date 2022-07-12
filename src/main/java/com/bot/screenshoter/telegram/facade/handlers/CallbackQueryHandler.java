@@ -18,6 +18,8 @@ import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 
+import java.io.File;
+
 @Component
 public class CallbackQueryHandler {
 
@@ -74,10 +76,11 @@ public class CallbackQueryHandler {
     }
 
     private void sendSimpleScreenshot(String chatID, String url) {
-        InputFile screenshot = new InputFile(webScreenshoter.takeSimpleScreenshot(url));
-        if (screenshot.getMediaName().isEmpty()) {
+        File file = webScreenshoter.takeSimpleScreenshot(url);
+        if (file == null) {
             bot.sendMessage(new SendMessage(chatID, "Страница не доступна или не существует"));
         } else {
+            InputFile screenshot = new InputFile(file);
             sendDocument(chatID, screenshot);
         }
     }
