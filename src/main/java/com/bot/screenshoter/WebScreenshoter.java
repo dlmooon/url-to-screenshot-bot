@@ -27,13 +27,12 @@ public class WebScreenshoter {
     public synchronized File takeSimpleScreenshot(String url) {
         log.info("Take a simple screenshot");
 
-        if (isPageExist(url)) {
-            webDriver.get(url);
-            waitPageLoad();
-        } else {
+        if (!isPageExist(url)) {
             return null;
         }
 
+        webDriver.get(url);
+        waitPageLoad();
         Screenshot screenshot = new AShot().takeScreenshot(webDriver);
         return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
     }
@@ -41,29 +40,29 @@ public class WebScreenshoter {
     public synchronized File takeLongScreenshot(String url) {
         log.info("Take a long screenshot");
 
-        if (url != null) {
-            webDriver.get(url);
-            waitPageLoad();
-            Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10)).takeScreenshot(webDriver);
-            return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
+        if (isPageExist(url)) {
+            return null;
         }
-        log.warn("Url is null!");
-        return null;
+
+        webDriver.get(url);
+        waitPageLoad();
+        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10)).takeScreenshot(webDriver);
+        return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
     }
 
     public synchronized File takeCustomScreenshot(String url, Dimension dimension) {
         log.info("Take a custom screenshot");
 
-        if (url != null) {
-            webDriver.get(url);
-            waitPageLoad();
-            webDriver.manage().window().setSize(dimension);
-            Screenshot screenshot = new AShot().takeScreenshot(webDriver);
-            webDriver.manage().window().setSize(new Dimension(1920, 1080));
-            return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
+        if (isPageExist(url)) {
+            return null;
         }
-        log.warn("Url is null!");
-        return null;
+
+        webDriver.get(url);
+        waitPageLoad();
+        webDriver.manage().window().setSize(dimension);
+        Screenshot screenshot = new AShot().takeScreenshot(webDriver);
+        webDriver.manage().window().setSize(new Dimension(1920, 1080));
+        return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
     }
 
     public synchronized File takeScreenshotWithScaling(String url, float dpr) {
@@ -79,6 +78,10 @@ public class WebScreenshoter {
     }
 
     private boolean isPageExist(String url) {
+        if (url == null) {
+            return false;
+        }
+
         try {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             connection.setRequestMethod("HEAD");
