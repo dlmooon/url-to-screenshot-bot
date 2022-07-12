@@ -73,7 +73,7 @@ public class MessageHandler {
                 return sendMessage;
 
             case ASK_DIMENSION:
-                String[] mas = message.getText().split("x");
+                String[] mas = message.getText().split("[xXхХ]");
                 Dimension dimension = new Dimension(Integer.parseInt(mas[0].trim()), Integer.parseInt(mas[1].trim()));
                 dimensionCache.addRequestDimension(chatID, dimension);
                 SendMessage message1 = new SendMessage(chatID, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" +
