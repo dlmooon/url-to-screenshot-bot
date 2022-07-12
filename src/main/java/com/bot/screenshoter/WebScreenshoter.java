@@ -40,7 +40,7 @@ public class WebScreenshoter {
     public synchronized File takeLongScreenshot(String url) {
         log.info("Take a long screenshot");
 
-        if (isPageExist(url)) {
+        if (!isPageExist(url)) {
             return null;
         }
 
@@ -53,7 +53,7 @@ public class WebScreenshoter {
     public synchronized File takeCustomScreenshot(String url, Dimension dimension) {
         log.info("Take a custom screenshot");
 
-        if (isPageExist(url)) {
+        if (!isPageExist(url)) {
             return null;
         }
 
