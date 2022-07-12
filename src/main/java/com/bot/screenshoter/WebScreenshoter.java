@@ -27,11 +27,12 @@ public class WebScreenshoter {
     public synchronized File takeSimpleScreenshot(String url) {
         log.info("Take a simple screenshot");
 
-        if (!isPageExist(url)) {
+        try {
+            webDriver.get(url);
+        } catch (RuntimeException e) {
             return null;
         }
 
-        webDriver.get(url);
         waitPageLoad();
         Screenshot screenshot = new AShot().takeScreenshot(webDriver);
         return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
@@ -40,7 +41,9 @@ public class WebScreenshoter {
     public synchronized File takeLongScreenshot(String url) {
         log.info("Take a long screenshot");
 
-        if (!isPageExist(url)) {
+        try {
+            webDriver.get(url);
+        } catch (RuntimeException e) {
             return null;
         }
 
@@ -53,7 +56,9 @@ public class WebScreenshoter {
     public synchronized File takeCustomScreenshot(String url, Dimension dimension) {
         log.info("Take a custom screenshot");
 
-        if (!isPageExist(url)) {
+        try {
+            webDriver.get(url);
+        } catch (RuntimeException e) {
             return null;
         }
 
@@ -75,21 +80,6 @@ public class WebScreenshoter {
     private void waitPageLoad() {
 //        long PAGE_LOAD_TIMEOUT = 5;
 //        webDriver.manage().timeouts().implicitlyWait(PAGE_LOAD_TIMEOUT, TimeUnit.SECONDS);
-    }
-
-    private boolean isPageExist(String url) {
-        if (url == null) {
-            return false;
-        }
-
-        try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
-            connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36");
-            connection.setRequestMethod("HEAD");
-            return connection.getResponseCode() == HttpURLConnection.HTTP_OK;
-        } catch (IOException e) {
-            return false;
-        }
     }
 
     private File getFileFromBufferedImage(BufferedImage image, String name) {
