@@ -6,5 +6,6 @@ public enum BotStateEnum {
     SHOW_ABOUT,
     ASK_URL,
     ASK_TYPE_SCREENSHOT,
-    ASK_DIMENSION
+    ASK_DIMENSION,
+    CONFIRM_ACTION
 }
