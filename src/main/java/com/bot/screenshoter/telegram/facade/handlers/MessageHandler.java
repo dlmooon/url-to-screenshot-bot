@@ -75,14 +75,19 @@ public class MessageHandler {
             case ASK_DIMENSION:
                 if (message.getText().matches("\\b\\d{2,4}\\h[xXхХ]\\h\\d{2,4}\\b")) {
                     String[] mas = message.getText().split("[xXхХ]");
-                    Dimension dimension = new Dimension(Integer.parseInt(mas[0].trim()), Integer.parseInt(mas[1].trim()));
+                    int width = Integer.parseInt(mas[0].trim());
+                    int height = Integer.parseInt(mas[0].trim());
+                    if (width > 6000 || height > 6000) {
+                        return new SendMessage(chatID, "Высота и ширина не могут быть больше 6000!");
+                    }
+                    Dimension dimension = new Dimension(width, height);
                     dimensionCache.addRequestDimension(chatID, dimension);
                     SendMessage message1 = new SendMessage(chatID, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" +
                             "Подтвердить действие?");
                     message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForConfirmOrCancel());
                     return message1;
                 } else {
-                    return new SendMessage(chatID, "Введите верное разрешение!");
+                    return new SendMessage(chatID, "Введите разрешение в верном формате!");
                 }
 
             default:
