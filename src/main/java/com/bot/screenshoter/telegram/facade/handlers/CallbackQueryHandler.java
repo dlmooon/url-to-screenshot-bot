@@ -45,10 +45,12 @@ public class CallbackQueryHandler {
         deleteInlineKeyboard(chatID, callbackQuery.getMessage().getMessageId());
         switch (button) {
             case SIMPLE_SCREENSHOT_BUTTON:
+                stateRepo.setUsersBotState(chatID, BotStateEnum.SHOW_SCREENSHOT);
                 sendSimpleScreenshot(chatID, urlCache.getRequestUrl(chatID));
                 return null;
 
             case LONG_SCREENSHOT_BUTTON:
+                stateRepo.setUsersBotState(chatID, BotStateEnum.SHOW_SCREENSHOT);
                 sendLongScreenshot(chatID, urlCache.getRequestUrl(chatID));
                 return null;
 
@@ -60,6 +62,7 @@ public class CallbackQueryHandler {
                         "(пример: 1920 x 800)");
 
             case CONFIRM_BUTTON:
+                stateRepo.setUsersBotState(chatID, BotStateEnum.SHOW_SCREENSHOT);
                 sendCustomScreenshot(chatID, urlCache.getRequestUrl(chatID), dimensionCache.getRequestDimension(chatID));
                 return null;
 
