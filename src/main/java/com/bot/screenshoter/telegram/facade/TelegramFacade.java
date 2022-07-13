@@ -33,7 +33,7 @@ public class TelegramFacade {
             }
         }
 
-        log.warn("Update from id {} does not contain callbackQuery and message", update.getMessage().getFrom().getId());
+        log.warn("Update with id {} does not contain callbackQuery and message", update.getUpdateId());
         return null;
     }
 }
