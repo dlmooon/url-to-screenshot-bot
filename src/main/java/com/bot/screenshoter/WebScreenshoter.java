@@ -35,7 +35,6 @@ public class WebScreenshoter {
 
         waitPageLoad();
         Screenshot screenshot = new AShot().takeScreenshot(webDriver);
-        webDriver.close();
         return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
     }
 
@@ -51,7 +50,6 @@ public class WebScreenshoter {
         webDriver.get(url);
         waitPageLoad();
         Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10)).takeScreenshot(webDriver);
-        webDriver.close();
         return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
     }
 
@@ -69,7 +67,6 @@ public class WebScreenshoter {
         webDriver.manage().window().setSize(dimension);
         Screenshot screenshot = new AShot().takeScreenshot(webDriver);
         webDriver.manage().window().setSize(new Dimension(1920, 1080));
-        webDriver.close();
         return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
     }
 
