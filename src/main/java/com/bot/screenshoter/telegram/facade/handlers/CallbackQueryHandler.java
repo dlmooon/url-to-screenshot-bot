@@ -56,7 +56,8 @@ public class CallbackQueryHandler {
                 stateRepo.setUsersBotState(chatID, BotStateEnum.ASK_DIMENSION);
                 return new SendMessage(chatID, "Введите разрешение скриншота в формате:\n" +
                         "ширина x высота\n" +
-                        "(пример: 1920 x 1080)");
+                        "где ширина и высота - числа от 10 до 9999 включительно\n" +
+                        "(пример: 1920 x 800)");
 
             case CONFIRM_BUTTON:
                 sendCustomScreenshot(chatID, urlCache.getRequestUrl(chatID), dimensionCache.getRequestDimension(chatID));
