@@ -73,13 +73,17 @@ public class MessageHandler {
                 return sendMessage;
 
             case ASK_DIMENSION:
-                String[] mas = message.getText().split("[xXхХ]");
-                Dimension dimension = new Dimension(Integer.parseInt(mas[0].trim()), Integer.parseInt(mas[1].trim()));
-                dimensionCache.addRequestDimension(chatID, dimension);
-                SendMessage message1 = new SendMessage(chatID, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" +
-                                                                    "Подтвердить действие?");
-                message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForConfirmOrCancel());
-                return message1;
+                if (message.getText().matches("\\b\\d{2,4}\\h[xXхХ]\\h\\d{2,4}\\b")) {
+                    String[] mas = message.getText().split("[xXхХ]");
+                    Dimension dimension = new Dimension(Integer.parseInt(mas[0].trim()), Integer.parseInt(mas[1].trim()));
+                    dimensionCache.addRequestDimension(chatID, dimension);
+                    SendMessage message1 = new SendMessage(chatID, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" +
+                            "Подтвердить действие?");
+                    message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForConfirmOrCancel());
+                    return message1;
+                } else {
+                    return new SendMessage(chatID, "Введите верное разрешение!");
+                }
 
             default:
                 return new SendMessage(chatID, "Я вас не понимаю");
