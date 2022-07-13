@@ -82,6 +82,8 @@ public class MessageHandler {
                     }
                     Dimension dimension = new Dimension(width, height);
                     dimensionCache.addRequestDimension(chatID, dimension);
+
+                    stateRepo.setUsersBotState(chatID, BotStateEnum.CONFIRM_ACTION);
                     SendMessage message1 = new SendMessage(chatID, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" +
                             "Подтвердить действие?");
                     message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForConfirmOrCancel());
