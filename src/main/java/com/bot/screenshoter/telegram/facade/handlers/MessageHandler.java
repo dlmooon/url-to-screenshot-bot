@@ -76,7 +76,7 @@ public class MessageHandler {
                 if (message.getText().matches("\\b\\d{2,4}\\h[xXхХ]\\h\\d{2,4}\\b")) {
                     String[] mas = message.getText().split("[xXхХ]");
                     int width = Integer.parseInt(mas[0].trim());
-                    int height = Integer.parseInt(mas[0].trim());
+                    int height = Integer.parseInt(mas[1].trim());
                     if (width > 6000 || height > 6000) {
                         return new SendMessage(chatID, "Высота и ширина не могут быть больше 6000!");
                     }
