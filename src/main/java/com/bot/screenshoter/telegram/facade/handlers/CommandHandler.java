@@ -14,23 +14,23 @@ public class CommandHandler {
     ReplyKeyboardMaker replyKeyboardMaker;
 
     public BotApiMethod<?> processCommand(Message message) {
-        String chatID = message.getChatId().toString();
+        String chatId = message.getChatId().toString();
         String inputText = message.getText();
 
         switch (inputText) {
             case "/start":
-                SendMessage sendMessage = new SendMessage(chatID, "Привет");
+                SendMessage sendMessage = new SendMessage(chatId, "Привет");
                 sendMessage.setReplyMarkup(replyKeyboardMaker.getMainKeyboard());
                 sendMessage.enableMarkdown(true);
                 return sendMessage;
 
             case "/help":
-                SendMessage message1 = new SendMessage(chatID, "В данный момент этот раздел находится в разработке. \n\n_По вопросам писать @listener69_");
+                SendMessage message1 = new SendMessage(chatId, "В данный момент этот раздел находится в разработке. \n\n_По вопросам писать @listener69_");
                 message1.enableMarkdown(true);
                 return message1;
 
             default:
-                return new SendMessage(chatID, "Неизвестная команда: " + message.getText() + ".\n" +
+                return new SendMessage(chatId, "Неизвестная команда: " + message.getText() + ".\n" +
                                                     "Используйте /help для получения актуальных команд.");
         }
     }
