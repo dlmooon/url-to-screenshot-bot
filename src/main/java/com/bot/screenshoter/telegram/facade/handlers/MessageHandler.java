@@ -41,33 +41,33 @@ public class MessageHandler {
 
     private BotApiMethod<?> processMessageFromReplyKeyboard(Message message) {
         ReplyButtonNameEnum button = ReplyButtonNameEnum.convert(message.getText());
-        String chatID = message.getChatId().toString();
+        String chatId = message.getChatId().toString();
 
         switch (button) {
             case TAKE_SCREENSHOT_BUTTON:
-                stateRepo.setUsersBotState(chatID, BotStateEnum.ASK_URL);
-                return new SendMessage(chatID, "Введите URL сайта");
+                stateRepo.setUsersBotState(chatId, BotStateEnum.ASK_URL);
+                return new SendMessage(chatId, "Введите URL сайта");
 
             case ABOUT_BUTTON:
-                return new SendMessage(chatID, EmojiEnum.CROWN.get() + " Бот умеет делать скришноты любого веб-сайта без сжатия");
+                return new SendMessage(chatId, EmojiEnum.CROWN.get() + " Бот умеет делать скришноты любого веб-сайта без сжатия");
 
             default:
-                return new SendMessage(chatID, "Что-то пошло не так, попробуйте еще раз");
+                return new SendMessage(chatId, "Что-то пошло не так, попробуйте еще раз");
         }
     }
 
     private BotApiMethod<?> processMessageFromUser(Message message) {
-        String chatID = message.getChatId().toString();
-        BotStateEnum botState = stateRepo.getUsersBotState(chatID);
+        String chatId = message.getChatId().toString();
+        BotStateEnum botState = stateRepo.getUsersBotState(chatId);
 
         switch (botState) {
             case ASK_URL:
-                urlCache.addRequestUrl(chatID, message.getText());
+                urlCache.addRequestUrl(chatId, message.getText());
 
-                stateRepo.setUsersBotState(chatID, BotStateEnum.ASK_TYPE_SCREENSHOT);
+                stateRepo.setUsersBotState(chatId, BotStateEnum.ASK_TYPE_SCREENSHOT);
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setText("Выберите тип скриншота:");
-                sendMessage.setChatId(chatID);
+                sendMessage.setChatId(chatId);
                 sendMessage.setReplyMarkup(inlineKeyboardMaker.getKeyboardForSelectTypeScreenshot());
 
                 return sendMessage;
@@ -78,22 +78,22 @@ public class MessageHandler {
                     int width = Integer.parseInt(mas[0].trim());
                     int height = Integer.parseInt(mas[1].trim());
                     if (width > 6000 || height > 6000) {
-                        return new SendMessage(chatID, "Высота и ширина не могут быть больше 6000!");
+                        return new SendMessage(chatId, "Высота и ширина не могут быть больше 6000!");
                     }
                     Dimension dimension = new Dimension(width, height);
-                    dimensionCache.addRequestDimension(chatID, dimension);
+                    dimensionCache.addRequestDimension(chatId, dimension);
 
-                    stateRepo.setUsersBotState(chatID, BotStateEnum.CONFIRM_ACTION);
-                    SendMessage message1 = new SendMessage(chatID, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" +
+                    stateRepo.setUsersBotState(chatId, BotStateEnum.CONFIRM_ACTION);
+                    SendMessage message1 = new SendMessage(chatId, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" +
                             "Подтвердить действие?");
                     message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForConfirmOrCancel());
                     return message1;
                 } else {
-                    return new SendMessage(chatID, "Введите разрешение в верном формате!");
+                    return new SendMessage(chatId, "Введите разрешение в верном формате!");
                 }
 
             default:
-                return new SendMessage(chatID, "Я вас не понимаю");
+                return new SendMessage(chatId, "Я вас не понимаю");
         }
     }
 }
