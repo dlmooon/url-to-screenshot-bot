@@ -36,7 +36,7 @@ public class UrlToScreenshotBot extends SpringWebhookBot {
         try {
             execute(photo);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.warn("Failed to send photo", e);
         }
     }
 
@@ -44,7 +44,7 @@ public class UrlToScreenshotBot extends SpringWebhookBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            throw new RuntimeException(e);
+            log.warn("Failed to send message", e);
         }
     }
 
@@ -52,7 +52,7 @@ public class UrlToScreenshotBot extends SpringWebhookBot {
         try {
             execute(message);
         } catch (TelegramApiException e) {
-            log.warn(e.toString());
+            log.warn("Failed to delete message", e);
         }
     }
 
@@ -60,7 +60,7 @@ public class UrlToScreenshotBot extends SpringWebhookBot {
         try {
             execute(document);
         } catch (TelegramApiException e) {
-            log.warn(e.toString());
+            log.warn("Failed to send document", e);
         }
     }
 
@@ -69,9 +69,17 @@ public class UrlToScreenshotBot extends SpringWebhookBot {
         return botUsername;
     }
 
+    public void setBotUsername(String botUsername) {
+        this.botUsername = botUsername;
+    }
+
     @Override
     public String getBotToken() {
         return botToken;
+    }
+
+    public void setBotToken(String botToken) {
+        this.botToken = botToken;
     }
 
     @Override
@@ -79,15 +87,7 @@ public class UrlToScreenshotBot extends SpringWebhookBot {
         return botWebhookPath;
     }
 
-    public void setBotWebhookPath(String botWebhookPath) {
+    public void setBotPath(String botWebhookPath) {
         this.botWebhookPath = botWebhookPath;
-    }
-
-    public void setBotUsername(String botUsername) {
-        this.botUsername = botUsername;
-    }
-
-    public void setBotToken(String botToken) {
-        this.botToken = botToken;
     }
 }
