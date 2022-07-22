@@ -4,14 +4,12 @@ import com.bot.screenshoter.telegram.facade.handlers.CallbackQueryHandler;
 import com.bot.screenshoter.telegram.facade.handlers.CommandHandler;
 import com.bot.screenshoter.telegram.facade.handlers.MessageHandler;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-@Slf4j
 @Component
 @AllArgsConstructor
 public class TelegramFacade {
@@ -33,7 +31,6 @@ public class TelegramFacade {
             }
         }
 
-        log.warn("Update with id {} does not contain callbackQuery and message", update.getUpdateId());
         return null;
     }
 }
