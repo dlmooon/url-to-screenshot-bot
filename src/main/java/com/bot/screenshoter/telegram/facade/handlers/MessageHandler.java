@@ -1,12 +1,12 @@
 package com.bot.screenshoter.telegram.facade.handlers;
 
+import com.bot.screenshoter.cache.BotStateCache;
+import com.bot.screenshoter.cache.RequestDimensionCache;
+import com.bot.screenshoter.cache.RequestUrlCache;
 import com.bot.screenshoter.constants.BotStateEnum;
 import com.bot.screenshoter.constants.EmojiEnum;
 import com.bot.screenshoter.constants.ReplyButtonNameEnum;
 import com.bot.screenshoter.keyboards.InlineKeyboardMaker;
-import com.bot.screenshoter.repositories.BotStateRepo;
-import com.bot.screenshoter.repositories.RequestDimensionCache;
-import com.bot.screenshoter.repositories.RequestUrlCache;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,7 +21,7 @@ public class MessageHandler {
     InlineKeyboardMaker inlineKeyboardMaker;
 
     @Autowired
-    BotStateRepo stateRepo;
+    BotStateCache stateCache;
 
     @Autowired
     RequestUrlCache urlCache;
@@ -45,7 +45,7 @@ public class MessageHandler {
 
         switch (button) {
             case TAKE_SCREENSHOT_BUTTON:
-                stateRepo.setUsersBotState(chatId, BotStateEnum.ASK_URL);
+                stateCache.setUsersBotState(chatId, BotStateEnum.ASK_URL);
                 return new SendMessage(chatId, "Введите URL сайта");
 
             case ABOUT_BUTTON:
@@ -58,13 +58,13 @@ public class MessageHandler {
 
     private BotApiMethod<?> processMessageFromUser(Message message) {
         String chatId = message.getChatId().toString();
-        BotStateEnum botState = stateRepo.getUsersBotState(chatId);
+        BotStateEnum botState = stateCache.getUsersBotState(chatId);
 
         switch (botState) {
             case ASK_URL:
                 urlCache.addRequestUrl(chatId, message.getText());
 
-                stateRepo.setUsersBotState(chatId, BotStateEnum.ASK_TYPE_SCREENSHOT);
+                stateCache.setUsersBotState(chatId, BotStateEnum.ASK_TYPE_SCREENSHOT);
                 SendMessage sendMessage = new SendMessage();
                 sendMessage.setText("Выберите тип скриншота:");
                 sendMessage.setChatId(chatId);
@@ -73,19 +73,15 @@ public class MessageHandler {
                 return sendMessage;
 
             case ASK_DIMENSION:
-                if (message.getText().matches("\\b\\d{2,4}\\h[xXхХ]\\h\\d{2,4}\\b")) {
-                    String[] mas = message.getText().split("[xXхХ]");
-                    int width = Integer.parseInt(mas[0].trim());
-                    int height = Integer.parseInt(mas[1].trim());
-                    if (width > 6000 || height > 6000) {
-                        return new SendMessage(chatId, "Высота и ширина не могут быть больше 6000!");
+                if (isCorrectFormat(message.getText())) {
+                    Dimension dimension = getDimension(message.getText());
+                    if (!isCorrectDimension(dimension)) {
+                        return new SendMessage(chatId, "Высота и ширина не могут быть меньше 1 и больше 6000!");
                     }
-                    Dimension dimension = new Dimension(width, height);
                     dimensionCache.addRequestDimension(chatId, dimension);
 
-                    stateRepo.setUsersBotState(chatId, BotStateEnum.CONFIRM_ACTION);
-                    SendMessage message1 = new SendMessage(chatId, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" +
-                            "Подтвердить действие?");
+                    stateCache.setUsersBotState(chatId, BotStateEnum.CONFIRM_ACTION);
+                    SendMessage message1 = new SendMessage(chatId, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" + "Подтвердить действие?");
                     message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForConfirmOrCancel());
                     return message1;
                 } else {
@@ -95,5 +91,25 @@ public class MessageHandler {
             default:
                 return new SendMessage(chatId, "Я вас не понимаю");
         }
+    }
+
+    private boolean isCorrectFormat(String text) {
+        return text.matches("\\b\\d{2,4}\\h[xXхХ]\\h\\d{2,4}\\b");
+    }
+
+    private boolean isCorrectDimension(Dimension dimension) {
+        int min = 1;
+        int max = 6000;
+        return dimension.getWidth() >= min &&
+                dimension.getHeight() >= min &&
+                dimension.getWidth() <= max &&
+                dimension.getHeight() <= max;
+    }
+
+    private Dimension getDimension(String text) {
+        String[] mas = text.split("[xXхХ]");
+        int width = Integer.parseInt(mas[0].trim());
+        int height = Integer.parseInt(mas[1].trim());
+        return new Dimension(width, height);
     }
 }
