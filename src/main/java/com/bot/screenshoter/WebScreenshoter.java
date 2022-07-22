@@ -1,85 +1,81 @@
 package com.bot.screenshoter;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.output.NullOutputStream;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.remote.service.DriverService;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 @Component
 @Slf4j
 public class WebScreenshoter {
 
-    private WebDriver webDriver;
+    private ChromeDriver driver;
 
-    public synchronized File takeSimpleScreenshot(String url) {
+    public synchronized File takeSimpleScreenshot(String url) throws RuntimeException {
         log.info("Take a simple screenshot");
 
-        try {
-            webDriver.get(url);
-        } catch (RuntimeException e) {
-            return null;
-        }
-
+        driver.get(url);
         waitPageLoad();
-        Screenshot screenshot = new AShot().takeScreenshot(webDriver);
+        Screenshot screenshot = new AShot().takeScreenshot(driver);
         return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
     }
 
-    public synchronized File takeLongScreenshot(String url) {
+    public synchronized File takeLongScreenshot(String url) throws RuntimeException {
         log.info("Take a long screenshot");
 
-        try {
-            webDriver.get(url);
-        } catch (RuntimeException e) {
-            return null;
-        }
-
-        webDriver.get(url);
+        driver.get(url);
         waitPageLoad();
-        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10)).takeScreenshot(webDriver);
+        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(1)).takeScreenshot(driver);
         return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
     }
 
-    public synchronized File takeCustomScreenshot(String url, Dimension dimension) {
+    public synchronized File takeCustomScreenshot(String url, Dimension dimension) throws RuntimeException {
         log.info("Take a custom screenshot");
 
-        try {
-            webDriver.get(url);
-        } catch (RuntimeException e) {
-            return null;
-        }
-
-        webDriver.get(url);
+        driver.get(url);
+        driver.manage().window().setSize(dimension);
         waitPageLoad();
-        webDriver.manage().window().setSize(dimension);
-        Screenshot screenshot = new AShot().takeScreenshot(webDriver);
-        webDriver.manage().window().setSize(new Dimension(1920, 1080));
+        Screenshot screenshot = new AShot().takeScreenshot(driver);
+        driver.manage().window().setSize(new Dimension(1920, 1080));
         return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
     }
 
     public synchronized File takeScreenshotWithScaling(String url, float dpr) {
         log.info("take a screenshot with scaling");
-        webDriver.get(url);
-        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.scaling(dpr)).takeScreenshot(webDriver);
+        driver.get(url);
+        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.scaling(dpr)).takeScreenshot(driver);
         return getFileFromBufferedImage(screenshot.getImage(), "scaling-screenshot");
     }
 
+    public Object executeScript(String script) {
+        return driver.executeScript(script);
+    }
+
+    @SneakyThrows
     private void waitPageLoad() {
-//        long PAGE_LOAD_TIMEOUT = 5;
-//        webDriver.manage().timeouts().implicitlyWait(PAGE_LOAD_TIMEOUT, TimeUnit.SECONDS);
+        Thread thread = new Thread(() -> {
+            WebDriverWait driverWait = new WebDriverWait(driver, 8);
+            driverWait.until(driver -> executeScript("return document.readyState").toString().equals("complete"));
+        });
+        thread.start();
+        thread.join();
     }
 
     private File getFileFromBufferedImage(BufferedImage image, String name) {
@@ -88,7 +84,7 @@ public class WebScreenshoter {
         try {
             ImageIO.write(image, "PNG", file);
         } catch (IOException e) {
-            log.warn(e.toString());
+            log.warn("Failed to write file", e);
         }
 
         return file;
@@ -96,16 +92,35 @@ public class WebScreenshoter {
 
     @PostConstruct
     private void prepareAndRunWebDriver() {
+        WebDriverManager.chromedriver().setup();
+
+        DriverService.Builder<ChromeDriverService, ChromeDriverService.Builder> serviceBuilder = new ChromeDriverService.Builder();
+        ChromeDriverService driverService = serviceBuilder.build();
+        driverService.sendOutputTo(NullOutputStream.NULL_OUTPUT_STREAM);
+
         ChromeOptions options = new ChromeOptions();
 
+        //Heroku build pack google chrome options
+        options.addArguments("--headless");
+        options.addArguments("disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--remote-debugging-port=9222");
+
+        //My options
         options.addArguments("--disable-infobars");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-browser-side-navigation");
         options.addArguments("--disable-features=VizDisplayCompositor");
         options.addArguments("window-size=1920,1080");
 
-        webDriver = new ChromeDriver(options);
+        driver = new ChromeDriver(driverService, options);
 
         log.info("Web driver is prepared and running");
+    }
+
+    @PreDestroy
+    private void endWebDriverSession() {
+        driver.quit();
+        log.info("web driver session is end");
     }
 }
