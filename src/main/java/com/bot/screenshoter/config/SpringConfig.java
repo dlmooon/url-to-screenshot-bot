@@ -22,7 +22,7 @@ public class SpringConfig {
 
         bot.setBotUsername(telegramBotConfig.getBotUsername());
         bot.setBotToken(telegramBotConfig.getBotToken());
-        bot.setBotWebhookPath(telegramBotConfig.getWebhookPath());
+        bot.setBotPath(telegramBotConfig.getWebhookPath());
 
         return bot;
     }
