@@ -1,12 +1,13 @@
 package com.bot.screenshoter.telegram.facade.handlers;
 
 import com.bot.screenshoter.WebScreenshoter;
+import com.bot.screenshoter.cache.BotStateCache;
+import com.bot.screenshoter.cache.RequestDimensionCache;
+import com.bot.screenshoter.cache.RequestUrlCache;
 import com.bot.screenshoter.constants.BotStateEnum;
 import com.bot.screenshoter.constants.InlineButtonNameEnum;
-import com.bot.screenshoter.repositories.BotStateRepo;
-import com.bot.screenshoter.repositories.RequestDimensionCache;
-import com.bot.screenshoter.repositories.RequestUrlCache;
 import com.bot.screenshoter.telegram.UrlToScreenshotBot;
+import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -20,6 +21,7 @@ import org.telegram.telegrambots.meta.api.objects.InputFile;
 
 import java.io.File;
 
+@Slf4j
 @Component
 public class CallbackQueryHandler {
 
@@ -37,82 +39,83 @@ public class CallbackQueryHandler {
     RequestDimensionCache dimensionCache;
 
     @Autowired
-    BotStateRepo stateRepo;
+    BotStateCache stateRepo;
 
     public BotApiMethod<?> processCallback(CallbackQuery callbackQuery) {
-        String chatID = callbackQuery.getMessage().getChatId().toString();
+        String chatId = callbackQuery.getMessage().getChatId().toString();
         InlineButtonNameEnum button = InlineButtonNameEnum.convert(callbackQuery.getData());
-        deleteInlineKeyboard(chatID, callbackQuery.getMessage().getMessageId());
+        deleteInlineKeyboard(chatId, callbackQuery.getMessage().getMessageId());
         switch (button) {
             case SIMPLE_SCREENSHOT_BUTTON:
-                stateRepo.setUsersBotState(chatID, BotStateEnum.SHOW_SCREENSHOT);
-                sendSimpleScreenshot(chatID, urlCache.getRequestUrl(chatID));
+                stateRepo.setUsersBotState(chatId, BotStateEnum.SHOW_SCREENSHOT);
+                sendSimpleScreenshot(chatId, urlCache.getRequestUrl(chatId));
                 return null;
 
             case LONG_SCREENSHOT_BUTTON:
-                stateRepo.setUsersBotState(chatID, BotStateEnum.SHOW_SCREENSHOT);
-                sendLongScreenshot(chatID, urlCache.getRequestUrl(chatID));
+                stateRepo.setUsersBotState(chatId, BotStateEnum.SHOW_SCREENSHOT);
+                sendLongScreenshot(chatId, urlCache.getRequestUrl(chatId));
                 return null;
 
             case CUSTOM_SCREENSHOT_BUTTON:
-                stateRepo.setUsersBotState(chatID, BotStateEnum.ASK_DIMENSION);
-                return new SendMessage(chatID, "Введите разрешение скриншота в формате:\n" +
-                        "ширина x высота\n" +
-                        "где ширина и высота - числа от 10 до 6000 включительно\n" +
+                stateRepo.setUsersBotState(chatId, BotStateEnum.ASK_DIMENSION);
+                return new SendMessage(chatId, "Введите разрешение скриншота, ширина и высота не должны быть больше 6000\n" +
                         "(пример: 1920 x 800)");
 
             case CONFIRM_BUTTON:
-                stateRepo.setUsersBotState(chatID, BotStateEnum.SHOW_SCREENSHOT);
-                sendCustomScreenshot(chatID, urlCache.getRequestUrl(chatID), dimensionCache.getRequestDimension(chatID));
+                stateRepo.setUsersBotState(chatId, BotStateEnum.SHOW_SCREENSHOT);
+                sendCustomScreenshot(chatId, urlCache.getRequestUrl(chatId), dimensionCache.getRequestDimension(chatId));
                 return null;
 
             case CANCEL_BUTTON:
-                stateRepo.setUsersBotState(chatID, BotStateEnum.SHOW_MENU);
-                return new SendMessage(chatID, "Действие отменено");
+                stateRepo.setUsersBotState(chatId, BotStateEnum.SHOW_MENU);
+                return new SendMessage(chatId, "Действие отменено");
 
             default:
-                return new SendMessage(chatID, "Что-то пошло не так, попробуйте еще раз");
+                return new SendMessage(chatId, "Что-то пошло не так, попробуйте еще раз");
         }
     }
 
-    private void deleteInlineKeyboard(String chatID, Integer messageID) {
-        DeleteMessage message = new DeleteMessage(chatID, messageID);
+    private void deleteInlineKeyboard(String chatId, Integer messageID) {
+        DeleteMessage message = new DeleteMessage(chatId, messageID);
         bot.deleteMessage(message);
     }
 
-    private void sendSimpleScreenshot(String chatID, String url) {
-        File file = webScreenshoter.takeSimpleScreenshot(url);
-        if (file == null) {
-            bot.sendMessage(new SendMessage(chatID, "Страница не доступна или не существует"));
-        } else {
+    private void sendSimpleScreenshot(String chatId, String url) {
+        try {
+            File file = webScreenshoter.takeSimpleScreenshot(url);
             InputFile screenshot = new InputFile(file);
-            sendDocument(chatID, screenshot);
+            sendDocument(chatId, screenshot);
+        } catch (RuntimeException e) {
+            log.warn("Failed to get simple screenshot", e);
+            bot.sendMessage(new SendMessage(chatId, "Не удается получить доступ к сайту, проверьте нет ли опечаток в Url адресе"));
         }
     }
 
-    private void sendLongScreenshot(String chatID, String url) {
-        File file = webScreenshoter.takeLongScreenshot(url);
-        if (file == null) {
-            bot.sendMessage(new SendMessage(chatID, "Страница не доступна или не существует"));
-        } else {
+    private void sendLongScreenshot(String chatId, String url) {
+        try {
+            File file = webScreenshoter.takeLongScreenshot(url);
             InputFile screenshot = new InputFile(file);
-            sendDocument(chatID, screenshot);
+            sendDocument(chatId, screenshot);
+        } catch (RuntimeException e) {
+            log.warn("Failed to get long screenshot", e);
+            bot.sendMessage(new SendMessage(chatId, "Не удается получить доступ к сайту, проверьте нет ли опечаток в Url адресе"));
         }
     }
 
-    private void sendCustomScreenshot(String chatID, String url, Dimension dimension) {
-        File file = webScreenshoter.takeCustomScreenshot(url, dimension);
-        if (file == null) {
-            bot.sendMessage(new SendMessage(chatID, "Страница не доступна или не существует"));
-        } else {
+    private void sendCustomScreenshot(String chatId, String url, Dimension dimension) {
+        try {
+            File file = webScreenshoter.takeCustomScreenshot(url, dimension);
             InputFile screenshot = new InputFile(file);
-            sendDocument(chatID, screenshot);
+            sendDocument(chatId, screenshot);
+        } catch (RuntimeException e) {
+            log.warn("Failed to get custom screenshot", e);
+            bot.sendMessage(new SendMessage(chatId, "Не удается получить доступ к сайту, проверьте нет ли опечаток в Url адресе"));
         }
     }
 
-    private void sendDocument(String chatID, InputFile screenshot) {
+    private void sendDocument(String chatId, InputFile screenshot) {
         SendDocument document = new SendDocument();
-        document.setChatId(chatID);
+        document.setChatId(chatId);
         document.setDocument(screenshot);
         bot.sendDocument(document);
     }
