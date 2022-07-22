@@ -94,7 +94,7 @@ public class MessageHandler {
     }
 
     private boolean isCorrectFormat(String text) {
-        return text.matches("\\b\\d{2,4}\\h[xXхХ]\\h\\d{2,4}\\b");
+        return text.matches("\\b\\d+\\h[xXхХ]\\h\\d+\\b");
     }
 
     private boolean isCorrectDimension(Dimension dimension) {
