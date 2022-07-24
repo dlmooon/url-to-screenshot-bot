@@ -9,7 +9,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.service.DriverService;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.stereotype.Component;
 import ru.yandex.qatools.ashot.AShot;
 import ru.yandex.qatools.ashot.Screenshot;
@@ -70,12 +69,7 @@ public class WebScreenshoter {
 
     @SneakyThrows
     private void waitPageLoad() {
-        Thread thread = new Thread(() -> {
-            WebDriverWait driverWait = new WebDriverWait(driver, 8);
-            driverWait.until(driver -> executeScript("return document.readyState").toString().equals("complete"));
-        });
-        thread.start();
-        thread.join();
+        // TODO: 22.07.2022 for custom screenshot make page load timeout configurable
     }
 
     private File getFileFromBufferedImage(BufferedImage image, String name) {
@@ -102,12 +96,13 @@ public class WebScreenshoter {
 
         //Heroku build pack google chrome options
         options.addArguments("--headless");
-        options.addArguments("disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--remote-debugging-port=9222");
+        options.addArguments("disable-gpu");
 
         //My options
         options.addArguments("--disable-infobars");
+        options.addArguments("--disable-extensions");
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-browser-side-navigation");
         options.addArguments("--disable-features=VizDisplayCompositor");
