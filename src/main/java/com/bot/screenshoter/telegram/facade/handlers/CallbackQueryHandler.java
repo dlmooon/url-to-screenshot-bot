@@ -53,7 +53,7 @@ public class CallbackQueryHandler {
 
             case LONG_SCREENSHOT_BUTTON:
                 stateRepo.setUsersBotState(chatId, BotStateEnum.SHOW_SCREENSHOT);
-                sendLongScreenshot(chatId, urlCache.getRequestUrl(chatId));
+                new Thread(() -> sendLongScreenshot(chatId, urlCache.getRequestUrl(chatId))).start();
                 return null;
 
             case CUSTOM_SCREENSHOT_BUTTON:
