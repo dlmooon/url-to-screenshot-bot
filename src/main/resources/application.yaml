@@ -5,11 +5,17 @@ telegram:
   bot-token: "5403668618:AAGwS7V6cXgCZ-Me4QKws-6vr8rp89cu4Yg"
 
 spring:
+#  datasource:
+#    url: "jdbc:postgresql://localhost/url-to-screenshot-bot-users"
+#    username: "postgres"
+#    password: "admin"
   output:
     ansi:
       enabled: "always"
 
 logging:
+  pattern:
+    dateformat: "yyyy-MM-dd HH:mm:ss.SSS,Asia/Yekaterinburg"
   level:
     root: "INFO"
 
