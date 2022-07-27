@@ -112,6 +112,9 @@ public class CallbackQueryHandler {
             if (isSent) {
                 urlHistoryRepo.setIsSent(Long.parseLong(chatId), true);
             }
+        } catch (DataIntegrityViolationException e) {
+            log.warn("User with id - {} not registered!", chatId);
+            bot.sendMessage(new SendMessage(chatId, "Кажется, что-то пошло не так, попробуйте перезагрузить бота (вызовите команду /start)"));
         } catch (RuntimeException e) {
             log.warn("Failed to get long screenshot", e);
             bot.sendMessage(new SendMessage(chatId, "Не удается получить доступ к сайту, проверьте нет ли опечаток в Url адресе"));
@@ -127,6 +130,9 @@ public class CallbackQueryHandler {
             if (isSent) {
                 urlHistoryRepo.setIsSent(Long.parseLong(chatId), true);
             }
+        } catch (DataIntegrityViolationException e) {
+            log.warn("User with id - {} not registered!", chatId);
+            bot.sendMessage(new SendMessage(chatId, "Кажется, что-то пошло не так, попробуйте перезагрузить бота (вызовите команду /start)"));
         } catch (RuntimeException e) {
             log.warn("Failed to get custom screenshot", e);
             bot.sendMessage(new SendMessage(chatId, "Не удается получить доступ к сайту, проверьте нет ли опечаток в Url адресе"));
