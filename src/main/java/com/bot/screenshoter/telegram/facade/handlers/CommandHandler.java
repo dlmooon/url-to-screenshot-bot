@@ -23,7 +23,9 @@ public class CommandHandler {
 
         switch (inputText) {
             case "/start":
-                usersRepo.register(message.getFrom());
+                if(!usersRepo.isUserExist(message.getFrom().getId())) {
+                    usersRepo.register(message.getFrom());
+                }
                 SendMessage sendMessage = new SendMessage(chatId, "Привет");
                 sendMessage.setReplyMarkup(replyKeyboardMaker.getMainKeyboard());
                 sendMessage.enableMarkdown(true);
