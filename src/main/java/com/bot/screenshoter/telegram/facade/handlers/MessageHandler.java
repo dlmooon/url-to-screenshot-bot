@@ -46,10 +46,13 @@ public class MessageHandler {
         switch (button) {
             case TAKE_SCREENSHOT_BUTTON:
                 stateCache.setUsersBotState(chatId, BotStateEnum.ASK_URL);
-                return new SendMessage(chatId, "Введите URL сайта");
+                return new SendMessage(chatId, "Введите URL веб-сайта");
 
             case ABOUT_BUTTON:
-                return new SendMessage(chatId, EmojiEnum.CROWN.get() + " Бот умеет делать скришноты любого веб-сайта без сжатия");
+                return new SendMessage(chatId,
+                        EmojiEnum.LIGHTNING.get() +
+                                " Бот может быстро и бесплатно сделать скриншот любого веб-сайта в высоком разрешении и без водяных знаков. Чтобы сделать это " +
+                                "вам потребуется только ссылка на веб-сайт, скриншот которого вы хотите получить " + EmojiEnum.LIGHTNING.get());
 
             default:
                 return new SendMessage(chatId, "Что-то пошло не так, попробуйте еще раз");
