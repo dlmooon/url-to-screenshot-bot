@@ -1,6 +1,6 @@
 package com.bot.screenshoter.config;
 
-import com.bot.screenshoter.telegram.UrlToScreenshotBot;
+import com.bot.screenshoter.telegram.Bot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +17,8 @@ public class SpringConfig {
     }
 
     @Bean
-    public UrlToScreenshotBot springWebhookBot(SetWebhook setWebhook) {
-        UrlToScreenshotBot bot = new UrlToScreenshotBot(setWebhook);
+    public Bot springWebhookBot(SetWebhook setWebhook) {
+        Bot bot = new Bot(setWebhook);
 
         bot.setBotUsername(telegramBotConfig.getBotUsername());
         bot.setBotToken(telegramBotConfig.getBotToken());
