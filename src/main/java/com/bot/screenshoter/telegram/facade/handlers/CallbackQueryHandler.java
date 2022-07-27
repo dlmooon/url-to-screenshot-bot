@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
@@ -93,6 +94,9 @@ public class CallbackQueryHandler {
             if (isSent) {
                 urlHistoryRepo.setIsSent(Long.parseLong(chatId), true);
             }
+        } catch (DataIntegrityViolationException e) {
+            log.warn("User with id - {} not registered!", chatId);
+            bot.sendMessage(new SendMessage(chatId, "Кажется, что-то пошло не так, попробуйте перезагрузить бота (вызовите команду /start)"));
         } catch (RuntimeException e) {
             log.warn("Failed to get simple screenshot", e);
             bot.sendMessage(new SendMessage(chatId, "Не удается получить доступ к сайту, проверьте нет ли опечаток в Url адресе"));
@@ -133,6 +137,6 @@ public class CallbackQueryHandler {
         SendDocument document = new SendDocument();
         document.setChatId(chatId);
         document.setDocument(screenshot);
-        return bot.sendDocument(document);
+        return bot.sendScreenshotAsDocument(document);
     }
 }
