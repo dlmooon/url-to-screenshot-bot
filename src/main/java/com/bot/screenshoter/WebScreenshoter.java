@@ -29,25 +29,20 @@ public class WebScreenshoter {
 
     public synchronized File takeSimpleScreenshot(String url) throws RuntimeException {
         log.info("Take a simple screenshot");
-
         driver.get(url);
-        waitPageLoad();
         Screenshot screenshot = new AShot().takeScreenshot(driver);
         return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
     }
 
     public synchronized File takeLongScreenshot(String url) throws RuntimeException {
         log.info("Take a long screenshot");
-
         driver.get(url);
-        waitPageLoad();
         Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(1)).takeScreenshot(driver);
         return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
     }
 
     public synchronized File takeCustomScreenshot(String url, Dimension dimension) throws RuntimeException {
         log.info("Take a custom screenshot");
-
         driver.get(url);
         driver.manage().window().setSize(dimension);
         waitPageLoad();
