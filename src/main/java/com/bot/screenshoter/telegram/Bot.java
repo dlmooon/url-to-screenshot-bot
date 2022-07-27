@@ -47,7 +47,7 @@ public class Bot extends SpringWebhookBot {
         }
     }
 
-    public boolean sendDocument(SendDocument document) {
+    public boolean sendScreenshotAsDocument(SendDocument document) {
         try {
             execute(document);
             return true;
