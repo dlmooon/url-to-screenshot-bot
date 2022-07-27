@@ -12,21 +12,20 @@ public class UsersRepo {
     JdbcTemplate jdbcTemplate;
 
     public void register(User user) {
-        if (!isUserExist(user.getId())) {
-            jdbcTemplate.update("INSERT INTO users " +
-                            "(tg_id, username, first_name, last_name, lang_code, is_bot, timestamp_registration) " +
-                            "VALUES(?, ?, ?, ?, ?, ?, current_timestamp(3))",
-                    user.getId(),
-                    user.getUserName(),
-                    user.getFirstName(),
-                    user.getLastName(),
-                    user.getLanguageCode(),
-                    user.getIsBot());
-        }
+        jdbcTemplate.update("INSERT INTO users " +
+                        "(user_id, username, first_name, last_name, lang_code, is_bot, timestamp_registration) " +
+                        "VALUES(?, ?, ?, ?, ?, ?, current_timestamp(3))",
+                user.getId(),
+                user.getUserName(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getLanguageCode(),
+                user.getIsBot());
+
     }
 
     public boolean isUserExist(Long tg_id) {
-        String sql = "SELECT count(*) FROM users WHERE tg_id = " + tg_id;
+        String sql = "SELECT count(*) FROM users WHERE user_id = " + tg_id;
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
         return count > 0;
     }
