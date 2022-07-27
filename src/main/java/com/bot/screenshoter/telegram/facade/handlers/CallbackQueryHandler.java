@@ -6,7 +6,8 @@ import com.bot.screenshoter.cache.RequestDimensionCache;
 import com.bot.screenshoter.cache.RequestUrlCache;
 import com.bot.screenshoter.constants.BotStateEnum;
 import com.bot.screenshoter.constants.InlineButtonNameEnum;
-import com.bot.screenshoter.telegram.UrlToScreenshotBot;
+import com.bot.screenshoter.repository.UrlHistoryRepo;
+import com.bot.screenshoter.telegram.Bot;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class CallbackQueryHandler {
 
     @Lazy
     @Autowired
-    UrlToScreenshotBot bot;
+    Bot bot;
 
     @Autowired
     WebScreenshoter webScreenshoter;
@@ -41,6 +42,9 @@ public class CallbackQueryHandler {
     @Autowired
     BotStateCache stateRepo;
 
+    @Autowired
+    UrlHistoryRepo urlHistoryRepo;
+
     public BotApiMethod<?> processCallback(CallbackQuery callbackQuery) {
         String chatId = callbackQuery.getMessage().getChatId().toString();
         InlineButtonNameEnum button = InlineButtonNameEnum.convert(callbackQuery.getData());
@@ -48,13 +52,13 @@ public class CallbackQueryHandler {
         switch (button) {
             case SIMPLE_SCREENSHOT_BUTTON:
                 stateRepo.setUsersBotState(chatId, BotStateEnum.SHOW_SCREENSHOT);
-                sendSimpleScreenshot(chatId, urlCache.getRequestUrl(chatId));
-                return null;
+                new Thread(() -> sendSimpleScreenshot(chatId, urlCache.getRequestUrl(chatId))).start();
+                return new SendMessage(chatId, "Пожалуйста, подождите...");
 
             case LONG_SCREENSHOT_BUTTON:
                 stateRepo.setUsersBotState(chatId, BotStateEnum.SHOW_SCREENSHOT);
                 new Thread(() -> sendLongScreenshot(chatId, urlCache.getRequestUrl(chatId))).start();
-                return null;
+                return new SendMessage(chatId, "Пожалуйста, подождите...");
 
             case CUSTOM_SCREENSHOT_BUTTON:
                 stateRepo.setUsersBotState(chatId, BotStateEnum.ASK_DIMENSION);
@@ -63,8 +67,8 @@ public class CallbackQueryHandler {
 
             case CONFIRM_BUTTON:
                 stateRepo.setUsersBotState(chatId, BotStateEnum.SHOW_SCREENSHOT);
-                sendCustomScreenshot(chatId, urlCache.getRequestUrl(chatId), dimensionCache.getRequestDimension(chatId));
-                return null;
+                new Thread(() -> sendCustomScreenshot(chatId, urlCache.getRequestUrl(chatId), dimensionCache.getRequestDimension(chatId))).start();
+                return new SendMessage(chatId, "Пожалуйста, подождите...");
 
             case CANCEL_BUTTON:
                 stateRepo.setUsersBotState(chatId, BotStateEnum.SHOW_MENU);
@@ -81,10 +85,14 @@ public class CallbackQueryHandler {
     }
 
     private void sendSimpleScreenshot(String chatId, String url) {
+        log.info("Trying to get a simple screenshot for id - {}", chatId);
         try {
             File file = webScreenshoter.takeSimpleScreenshot(url);
-            InputFile screenshot = new InputFile(file);
-            sendDocument(chatId, screenshot);
+            urlHistoryRepo.addUrl(url, "simple", Long.parseLong(chatId));
+            boolean isSent = sendDocument(chatId, new InputFile(file));
+            if (isSent) {
+                urlHistoryRepo.setIsSent(Long.parseLong(chatId), true);
+            }
         } catch (RuntimeException e) {
             log.warn("Failed to get simple screenshot", e);
             bot.sendMessage(new SendMessage(chatId, "Не удается получить доступ к сайту, проверьте нет ли опечаток в Url адресе"));
@@ -92,10 +100,14 @@ public class CallbackQueryHandler {
     }
 
     private void sendLongScreenshot(String chatId, String url) {
+        log.info("Trying to get a long screenshot for id - {}", chatId);
         try {
             File file = webScreenshoter.takeLongScreenshot(url);
-            InputFile screenshot = new InputFile(file);
-            sendDocument(chatId, screenshot);
+            urlHistoryRepo.addUrl(url, "long", Long.parseLong(chatId));
+            boolean isSent = sendDocument(chatId, new InputFile(file));
+            if (isSent) {
+                urlHistoryRepo.setIsSent(Long.parseLong(chatId), true);
+            }
         } catch (RuntimeException e) {
             log.warn("Failed to get long screenshot", e);
             bot.sendMessage(new SendMessage(chatId, "Не удается получить доступ к сайту, проверьте нет ли опечаток в Url адресе"));
@@ -103,20 +115,24 @@ public class CallbackQueryHandler {
     }
 
     private void sendCustomScreenshot(String chatId, String url, Dimension dimension) {
+        log.info("Trying to get a custom screenshot for id - {}", chatId);
         try {
             File file = webScreenshoter.takeCustomScreenshot(url, dimension);
-            InputFile screenshot = new InputFile(file);
-            sendDocument(chatId, screenshot);
+            urlHistoryRepo.addUrl(url, "custom", Long.parseLong(chatId));
+            boolean isSent = sendDocument(chatId, new InputFile(file));
+            if (isSent) {
+                urlHistoryRepo.setIsSent(Long.parseLong(chatId), true);
+            }
         } catch (RuntimeException e) {
             log.warn("Failed to get custom screenshot", e);
             bot.sendMessage(new SendMessage(chatId, "Не удается получить доступ к сайту, проверьте нет ли опечаток в Url адресе"));
         }
     }
 
-    private void sendDocument(String chatId, InputFile screenshot) {
+    private boolean sendDocument(String chatId, InputFile screenshot) {
         SendDocument document = new SendDocument();
         document.setChatId(chatId);
         document.setDocument(screenshot);
-        bot.sendDocument(document);
+        return bot.sendDocument(document);
     }
 }
