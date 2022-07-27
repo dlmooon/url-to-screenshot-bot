@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
-import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -14,7 +13,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 
 @Slf4j
-public class UrlToScreenshotBot extends SpringWebhookBot {
+public class Bot extends SpringWebhookBot {
 
     private String botWebhookPath;
     private String botUsername;
@@ -23,21 +22,13 @@ public class UrlToScreenshotBot extends SpringWebhookBot {
     @Autowired
     TelegramFacade telegramFacade;
 
-    public UrlToScreenshotBot(SetWebhook setWebhook) {
+    public Bot(SetWebhook setWebhook) {
         super(setWebhook);
     }
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
         return telegramFacade.handleUpdate(update);
-    }
-
-    public void sendPhoto(SendPhoto photo) {
-        try {
-            execute(photo);
-        } catch (TelegramApiException e) {
-            log.warn("Failed to send photo", e);
-        }
     }
 
     public void sendMessage(SendMessage message) {
@@ -56,11 +47,13 @@ public class UrlToScreenshotBot extends SpringWebhookBot {
         }
     }
 
-    public void sendDocument(SendDocument document) {
+    public boolean sendDocument(SendDocument document) {
         try {
             execute(document);
+            return true;
         } catch (TelegramApiException e) {
             log.warn("Failed to send document", e);
+            return false;
         }
     }
 
