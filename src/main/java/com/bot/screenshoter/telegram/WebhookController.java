@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class WebhookController {
 
     @Autowired
-    private final UrlToScreenshotBot bot;
+    private final Bot bot;
 
     @PostMapping("/")
     public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
