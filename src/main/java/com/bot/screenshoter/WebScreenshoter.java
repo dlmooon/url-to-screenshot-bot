@@ -28,22 +28,25 @@ public class WebScreenshoter {
     private ChromeDriver driver;
 
     public synchronized File takeSimpleScreenshot(String url) throws RuntimeException {
-        log.info("Take a simple screenshot");
+        log.debug("Attempt to open a website");
         driver.get(url);
+        log.debug("Taking simple screenshot");
         Screenshot screenshot = new AShot().takeScreenshot(driver);
         return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
     }
 
     public synchronized File takeLongScreenshot(String url) throws RuntimeException {
-        log.info("Take a long screenshot");
+        log.debug("Attempt to open a website");
         driver.get(url);
+        log.debug("Taking long screenshot");
         Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(1)).takeScreenshot(driver);
         return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
     }
 
     public synchronized File takeCustomScreenshot(String url, Dimension dimension) throws RuntimeException {
-        log.info("Take a custom screenshot");
+        log.debug("Attempt to open a website");
         driver.get(url);
+        log.debug("Setting driver size, width - {}, height - {}", dimension.getWidth(), dimension.getHeight());
         driver.manage().window().setSize(dimension);
         waitPageLoad();
         Screenshot screenshot = new AShot().takeScreenshot(driver);
@@ -70,6 +73,7 @@ public class WebScreenshoter {
     private File getFileFromBufferedImage(BufferedImage image, String name) {
         File file = new File(name + ".png");
 
+        log.debug("Attempt to write a screenshot to a file");
         try {
             ImageIO.write(image, "PNG", file);
         } catch (IOException e) {
