@@ -26,6 +26,6 @@ public class BotStateCache {
         }
 
         BotStateEnum botState = botStateCash.get(chatId);
-        return botState == null ? BotStateEnum.SHOW_MENU : botState;
+        return botState == null ? BotStateEnum.ASK_LANGUAGE : botState;
     }
 }
