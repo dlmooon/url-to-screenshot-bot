@@ -1,20 +1,23 @@
 package com.bot.screenshoter.telegram.facade.handlers;
 
+import com.bot.screenshoter.LocaleMessageService;
 import com.bot.screenshoter.cache.BotStateCache;
 import com.bot.screenshoter.cache.RequestDimensionCache;
 import com.bot.screenshoter.cache.RequestUrlCache;
 import com.bot.screenshoter.constants.BotStateEnum;
-import com.bot.screenshoter.constants.EmojiEnum;
-import com.bot.screenshoter.constants.ReplyButtonNameEnum;
 import com.bot.screenshoter.keyboards.InlineKeyboardMaker;
 import org.openqa.selenium.Dimension;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 
-@Component
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+
+@Service
 public class MessageHandler {
 
     @Autowired
@@ -29,33 +32,30 @@ public class MessageHandler {
     @Autowired
     RequestDimensionCache dimensionCache;
 
-    public BotApiMethod<?> processMessage(Message message) {
-        String inputText = message.getText();
+    @Autowired
+    LocaleMessageService localeMessage;
 
-        if (ReplyButtonNameEnum.isNameOfButton(inputText)) {
-            return processMessageFromReplyKeyboard(message);
-        } else {
-            return processMessageFromUser(message);
-        }
+    public BotApiMethod<?> processMessage(Message message) {
+        return processMessageFromReplyKeyboard(message);
     }
 
     private BotApiMethod<?> processMessageFromReplyKeyboard(Message message) {
-        ReplyButtonNameEnum button = ReplyButtonNameEnum.convert(message.getText());
         String chatId = message.getChatId().toString();
+        String text = message.getText();
 
-        switch (button) {
-            case TAKE_SCREENSHOT_BUTTON:
-                stateCache.setUsersBotState(chatId, BotStateEnum.ASK_URL);
-                return new SendMessage(chatId, "Введите URL веб-сайта");
-
-            case ABOUT_BUTTON:
-                return new SendMessage(chatId,
-                        EmojiEnum.LIGHTNING.get() +
-                                " Бот может быстро и бесплатно сделать скриншот любого веб-сайта в высоком разрешении и без водяных знаков. Чтобы сделать это " +
-                                "вам потребуется только ссылка на веб-сайт, скриншот которого вы хотите получить " + EmojiEnum.LIGHTNING.get());
-
-            default:
-                return new SendMessage(chatId, "Что-то пошло не так, попробуйте еще раз");
+        if (text.equals(localeMessage.getById(chatId, "button_take_screenshot"))) {
+            stateCache.setUsersBotState(chatId, BotStateEnum.ASK_URL);
+            return new SendMessage(chatId, localeMessage.getById(chatId, "enter_url"));
+        } else if (text.equals(localeMessage.getById(chatId, "button_about"))) {
+            stateCache.setUsersBotState(chatId, BotStateEnum.SHOW_ABOUT);
+            return new SendMessage(chatId, localeMessage.getById(chatId, "about_bot"));
+        } else if (text.equals(localeMessage.getById(chatId, "button_language"))) {
+            stateCache.setUsersBotState(chatId, BotStateEnum.ASK_LANGUAGE);
+            SendMessage message1 = new SendMessage(chatId, localeMessage.getDefault("choose_lang"));
+            message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForSelectLang());
+            return message1;
+        } else {
+            return processMessageFromUser(message);
         }
     }
 
@@ -65,13 +65,16 @@ public class MessageHandler {
 
         switch (botState) {
             case ASK_URL:
+                if (!isCorrectUrl(message.getText())) {
+                    return new SendMessage(chatId, localeMessage.getById(chatId, "invalid_url"));
+                }
                 urlCache.addRequestUrl(chatId, message.getText());
 
                 stateCache.setUsersBotState(chatId, BotStateEnum.ASK_TYPE_SCREENSHOT);
                 SendMessage sendMessage = new SendMessage();
-                sendMessage.setText("Выберите тип скриншота:");
+                sendMessage.setText(localeMessage.getById(chatId, "select_screenshot_type"));
                 sendMessage.setChatId(chatId);
-                sendMessage.setReplyMarkup(inlineKeyboardMaker.getKeyboardForSelectTypeScreenshot());
+                sendMessage.setReplyMarkup(inlineKeyboardMaker.getKeyboardForSelectTypeScreenshot(chatId));
 
                 return sendMessage;
 
@@ -79,20 +82,25 @@ public class MessageHandler {
                 if (isCorrectFormat(message.getText())) {
                     Dimension dimension = getDimension(message.getText());
                     if (!isCorrectDimension(dimension)) {
-                        return new SendMessage(chatId, "Высота и ширина не могут быть меньше 1 и больше 6000!");
+                        return new SendMessage(chatId, localeMessage.getById(chatId, "wrong_resolution"));
                     }
                     dimensionCache.addRequestDimension(chatId, dimension);
 
                     stateCache.setUsersBotState(chatId, BotStateEnum.CONFIRM_ACTION);
-                    SendMessage message1 = new SendMessage(chatId, "Разрешение: " + dimension.getWidth() + " x " + dimension.getHeight() + "\n" + "Подтвердить действие?");
-                    message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForConfirmOrCancel());
+                    SendMessage message1 = new SendMessage(chatId, localeMessage.getById(chatId, new String[]{String.valueOf(dimension.getWidth()), String.valueOf(dimension.getHeight())}, "confirm_action"));
+                    message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForConfirmOrCancel(chatId));
                     return message1;
                 } else {
-                    return new SendMessage(chatId, "Введите разрешение в верном формате!");
+                    return new SendMessage(chatId, localeMessage.getById(chatId, "invalid_resolution"));
                 }
 
+            case ASK_LANGUAGE:
+                SendMessage message1 = new SendMessage(chatId, localeMessage.getDefault("choose_lang"));
+                message1.setReplyMarkup(inlineKeyboardMaker.getKeyboardForSelectLang());
+                return message1;
+
             default:
-                return new SendMessage(chatId, "Я вас не понимаю");
+                return new SendMessage(chatId, localeMessage.getById(chatId, "dont_understand"));
         }
     }
 
@@ -107,6 +115,16 @@ public class MessageHandler {
                 dimension.getHeight() >= min &&
                 dimension.getWidth() <= max &&
                 dimension.getHeight() <= max;
+    }
+
+    private boolean isCorrectUrl(String url) {
+        try {
+            URL checkUrl = new URL(url);
+            checkUrl.toURI();
+            return true;
+        } catch (MalformedURLException | URISyntaxException e) {
+            return false;
+        }
     }
 
     private Dimension getDimension(String text) {
