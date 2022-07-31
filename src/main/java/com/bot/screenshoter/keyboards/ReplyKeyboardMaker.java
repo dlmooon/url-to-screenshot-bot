@@ -1,6 +1,7 @@
 package com.bot.screenshoter.keyboards;
 
-import com.bot.screenshoter.constants.ReplyButtonNameEnum;
+import com.bot.screenshoter.LocaleMessageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -12,12 +13,16 @@ import java.util.List;
 @Component
 public class ReplyKeyboardMaker {
 
-    public ReplyKeyboardMarkup getMainKeyboard() {
+    @Autowired
+    LocaleMessageService messageService;
+
+    public ReplyKeyboardMarkup getMainKeyboard(String langTag) {
         KeyboardRow row1 = new KeyboardRow();
-        row1.add(new KeyboardButton(ReplyButtonNameEnum.TAKE_SCREENSHOT_BUTTON.getText()));
+        row1.add(new KeyboardButton(messageService.getByTag("button_take_screenshot", langTag)));
 
         KeyboardRow row2 = new KeyboardRow();
-        row2.add(new KeyboardButton(ReplyButtonNameEnum.ABOUT_BUTTON.getText()));
+        row2.add(new KeyboardButton(messageService.getByTag("button_about", langTag)));
+        row2.add(new KeyboardButton(messageService.getByTag("button_language", langTag)));
 
         List<KeyboardRow> keyboard = new ArrayList<>();
         keyboard.add(row1);
