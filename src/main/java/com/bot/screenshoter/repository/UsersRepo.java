@@ -1,9 +1,12 @@
 package com.bot.screenshoter.repository;
 
+import com.bot.screenshoter.mapper.UsersRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.telegram.telegrambots.meta.api.objects.User;
+
+import java.util.List;
 
 @Repository
 public class UsersRepo {
@@ -28,5 +31,9 @@ public class UsersRepo {
         String sql = "SELECT count(*) FROM users WHERE user_id = " + tg_id;
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
         return count > 0;
+    }
+
+    public List<User> getAllUsers() {
+        return jdbcTemplate.query("SELECT * FROM users", new UsersRowMapper());
     }
 }
