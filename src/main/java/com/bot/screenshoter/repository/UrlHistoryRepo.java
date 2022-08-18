@@ -12,7 +12,7 @@ public class UrlHistoryRepo {
 
     public void addUrl(String url, String type, Long chatId) {
         jdbcTemplate.update("INSERT INTO url_history " +
-                "(url, type, is_sent, timestamp_request, fk_user_id) " +
+                "(url, type, is_sent, timestamp_request, user_id) " +
                 "VALUES (?, ?, false, current_timestamp(3), ?)",
                 url,
                 type,
