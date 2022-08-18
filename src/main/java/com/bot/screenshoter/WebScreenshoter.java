@@ -15,14 +15,13 @@ import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-@Service
 @Slf4j
+@Service
 public class WebScreenshoter {
 
     private ChromeDriver driver;
@@ -111,10 +110,5 @@ public class WebScreenshoter {
 
         log.info("Web driver is prepared and running");
     }
-
-    @PreDestroy
-    private void endWebDriverSession() {
-        driver.quit();
-        log.info("web driver session is end");
-    }
 }
+
