@@ -1,6 +1,6 @@
 package com.bot.screenshoter.telegram;
 
-import com.bot.screenshoter.telegram.facade.TelegramFacade;
+import com.bot.screenshoter.handlers.impl.UpdateHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -21,7 +21,7 @@ public class Bot extends SpringWebhookBot {
     private String botToken;
 
     @Autowired
-    TelegramFacade telegramFacade;
+    UpdateHandler updateHandler;
 
     public Bot(SetWebhook setWebhook) {
         super(setWebhook);
@@ -29,7 +29,8 @@ public class Bot extends SpringWebhookBot {
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        return telegramFacade.handleUpdate(update);
+        updateHandler.handle(update);
+        return null;
     }
 
     public void sendMessage(SendMessage message) {
