@@ -29,7 +29,7 @@ public class Bot extends SpringWebhookBot {
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        updateHandler.handle(update);
+        new Thread(() -> updateHandler.handle(update)).start();
         return null;
     }
 
