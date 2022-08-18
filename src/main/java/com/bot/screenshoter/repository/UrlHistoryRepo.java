@@ -20,6 +20,6 @@ public class UrlHistoryRepo {
     }
 
     public void setIsSent(Long chatId, boolean isSent) {
-        jdbcTemplate.update("UPDATE url_history SET is_sent = ? WHERE fk_user_id = ?", isSent, chatId);
+        jdbcTemplate.update("UPDATE url_history SET is_sent = ? WHERE user_id = ?", isSent, chatId);
     }
 }
