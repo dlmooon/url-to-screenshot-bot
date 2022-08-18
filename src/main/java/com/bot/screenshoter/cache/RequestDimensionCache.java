@@ -2,12 +2,12 @@ package com.bot.screenshoter.cache;
 
 import lombok.NonNull;
 import org.openqa.selenium.Dimension;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Repository
+@Component
 public class RequestDimensionCache {
 
     private final Map<String, Dimension> dimensionCache = new HashMap<>();
