@@ -2,12 +2,12 @@ package com.bot.screenshoter.cache;
 
 import com.bot.screenshoter.constants.BotStateEnum;
 import lombok.NonNull;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Repository
+@Component
 public class BotStateCache {
 
     private final Map<String, BotStateEnum> botStateCash = new HashMap<>();
@@ -26,6 +26,6 @@ public class BotStateCache {
         }
 
         BotStateEnum botState = botStateCash.get(chatId);
-        return botState == null ? BotStateEnum.ASK_LANGUAGE : botState;
+        return botState == null ? BotStateEnum.SHOW_MENU : botState;
     }
 }
