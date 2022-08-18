@@ -1,14 +1,13 @@
 telegram:
-  api-url: "https://api.telegram.org/"
-  webhook-path: "https://url-to-screenshot-bot.herokuapp.com/"
-  bot-username: "URL_To_Screenshot_Bot"
-  bot-token: "5403668618:AAGwS7V6cXgCZ-Me4QKws-6vr8rp89cu4Yg"
+  webhook-path:
+  bot-username:
+  bot-token:
 
 spring:
-#  datasource:
-#    url: "jdbc:postgresql://localhost/url-to-screenshot-bot-users"
-#    username: "postgres"
-#    password: "admin"
+  datasource:
+    url:
+    username:
+    password:
   output:
     ansi:
       enabled: "always"
