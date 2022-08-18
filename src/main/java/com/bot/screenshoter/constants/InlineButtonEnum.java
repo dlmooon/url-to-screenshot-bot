@@ -10,15 +10,5 @@ public enum InlineButtonEnum {
     CANCEL_BUTTON,
 
     RUSSIA_LANG_BUTTON,
-    ENGLISH_LANG_BUTTON;
-
-    public static InlineButtonEnum convert(String callbackData) {
-        for (InlineButtonEnum button : InlineButtonEnum.values()) {
-            if (button.name().equals(callbackData)) {
-                return button;
-            }
-        }
-
-        throw new IllegalArgumentException();
-    }
+    ENGLISH_LANG_BUTTON
 }
