@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 
 @Configuration
 public class SpringConfig {
+
     @Autowired
     private TelegramBotConfig telegramBotConfig;
 
