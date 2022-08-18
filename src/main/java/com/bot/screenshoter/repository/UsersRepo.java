@@ -14,10 +14,15 @@ public class UsersRepo {
     @Autowired
     JdbcTemplate jdbcTemplate;
 
-    public void register(User user) {
+    public void registerOrUpdateIfExist(User user) {
         jdbcTemplate.update("INSERT INTO users " +
                         "(user_id, username, first_name, last_name, lang_code, is_bot, timestamp_registration) " +
-                        "VALUES(?, ?, ?, ?, ?, ?, current_timestamp(3))",
+                        "VALUES (?, ?, ?, ?, ?, ?, current_timestamp(3)) " +
+                        "ON CONFLICT (user_id) DO UPDATE SET " +
+                        "user_id = excluded.user_id," +
+                        "first_name = excluded.first_name," +
+                        "last_name = excluded.last_name," +
+                        "lang_code = excluded.lang_code",
                 user.getId(),
                 user.getUserName(),
                 user.getFirstName(),
@@ -29,7 +34,7 @@ public class UsersRepo {
 
     public boolean isUserExist(Long tg_id) {
         String sql = "SELECT count(*) FROM users WHERE user_id = " + tg_id;
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+        int count = jdbcTemplate.queryForObject(sql, Integer.class);
         return count > 0;
     }
 
