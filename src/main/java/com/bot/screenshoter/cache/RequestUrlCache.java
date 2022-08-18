@@ -1,12 +1,12 @@
 package com.bot.screenshoter.cache;
 
 import lombok.NonNull;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Repository
+@Component
 public class RequestUrlCache {
 
     private final Map<String, String> urlCache = new HashMap<>();
