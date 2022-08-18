@@ -1,6 +1,5 @@
 package com.bot.screenshoter;
 
-import com.bot.screenshoter.cache.LocaleCache;
 import com.bot.screenshoter.repository.UsersBotLangRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -12,10 +11,10 @@ import java.util.Locale;
 public class LocaleMessageService {
 
     @Autowired
-    MessageSource messageSource;
+    private MessageSource messageSource;
 
     @Autowired
-    UsersBotLangRepo botLangRepo;
+    private UsersBotLangRepo botLangRepo;
 
     public String getById(String chatId, String message) {
         Locale locale = Locale.forLanguageTag(botLangRepo.getLang(Long.parseLong(chatId)));
