@@ -1,7 +1,7 @@
 package com.bot.screenshoter.handlers.impl;
 
-import com.bot.screenshoter.MessageSender;
 import com.bot.screenshoter.ScreenshotSender;
+import com.bot.screenshoter.TelegramSender;
 import com.bot.screenshoter.cache.BotStateCache;
 import com.bot.screenshoter.cache.RequestDimensionCache;
 import com.bot.screenshoter.cache.RequestUrlCache;
@@ -33,7 +33,7 @@ public class CallbackQueryHandler implements Handler {
     @Autowired
     private ReplyKeyboardMaker keyboardMaker;
     @Autowired
-    private MessageSender messageSender;
+    private TelegramSender telegramSender;
 
     @Override
     public boolean supports(Update update) {
@@ -50,7 +50,7 @@ public class CallbackQueryHandler implements Handler {
         CallbackQuery callbackQuery = update.getCallbackQuery();
         String chatId = callbackQuery.getMessage().getChatId().toString();
         InlineButtonEnum button = InlineButtonEnum.valueOf(callbackQuery.getData());
-        messageSender.delete(chatId, callbackQuery.getMessage().getMessageId());
+        telegramSender.deleteMessage(chatId, callbackQuery.getMessage().getMessageId());
         switch (button) {
             case SIMPLE_SCREENSHOT_BUTTON:
                 stateCache.setUsersBotState(chatId, BotStateEnum.SHOW_SCREENSHOT);
@@ -64,7 +64,7 @@ public class CallbackQueryHandler implements Handler {
 
             case CUSTOM_SCREENSHOT_BUTTON:
                 stateCache.setUsersBotState(chatId, BotStateEnum.ASK_DIMENSION);
-                messageSender.send(chatId, "enter_resolution");
+                telegramSender.sendMessage(chatId, "enter_resolution");
                 break;
 
             case CONFIRM_BUTTON:
@@ -74,23 +74,23 @@ public class CallbackQueryHandler implements Handler {
 
             case CANCEL_BUTTON:
                 stateCache.setUsersBotState(chatId, BotStateEnum.SHOW_MENU);
-                messageSender.send(chatId, "action_canceled");
+                telegramSender.sendMessage(chatId, "action_canceled");
                 break;
 
             case RUSSIA_LANG_BUTTON:
                 botLangRepo.setLang(Long.parseLong(chatId), "ru");
                 stateCache.setUsersBotState(chatId, BotStateEnum.SHOW_MENU);
-                messageSender.send(chatId, "language_set", keyboardMaker.getMainKeyboard("ru"));
+                telegramSender.sendMessage(chatId, "language_set", keyboardMaker.getMainKeyboard("ru"));
                 break;
 
             case ENGLISH_LANG_BUTTON:
                 botLangRepo.setLang(Long.parseLong(chatId), "en");
                 stateCache.setUsersBotState(chatId, BotStateEnum.SHOW_MENU);
-                messageSender.send(chatId, "language_set", keyboardMaker.getMainKeyboard("en"));
+                telegramSender.sendMessage(chatId, "language_set", keyboardMaker.getMainKeyboard("en"));
                 break;
 
             default:
-                messageSender.send(chatId, "something_wrong");
+                telegramSender.sendMessage(chatId, "something_wrong");
         }
     }
 }
