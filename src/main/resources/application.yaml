@@ -8,6 +8,8 @@ spring:
     url:
     username:
     password:
+  flyway:
+    baseline-on-migrate: true
   output:
     ansi:
       enabled: "always"
@@ -17,4 +19,3 @@ logging:
     dateformat: "yyyy-MM-dd HH:mm:ss.SSS,Asia/Yekaterinburg"
   level:
     root: "INFO"
-
