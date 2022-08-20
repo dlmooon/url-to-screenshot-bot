@@ -22,8 +22,7 @@ public class UsersBotLangRepo {
     public String getLang(Long chatId) {
         String sql = "SELECT lang_code FROM users_bot_lang WHERE user_id = " + chatId;
         try {
-            String lang = jdbcTemplate.queryForObject(sql, String.class);
-            return lang;
+            return jdbcTemplate.queryForObject(sql, String.class);
         } catch (EmptyResultDataAccessException e) {
             return "en";
         }
