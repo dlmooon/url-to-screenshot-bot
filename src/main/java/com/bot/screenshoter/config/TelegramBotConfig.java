@@ -6,11 +6,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class TelegramBotConfig {
 
-    @Value("${WEBHOOK_PATH}")
+    @Value("${WEBHOOK_PATH:${telegram.webhook-path}}")
     private String webhookPath;
-    @Value("${BOT_USERNAME}")
+    @Value("${BOT_USERNAME:${telegram.bot-username}}")
     private String botUsername;
-    @Value("${BOT_TOKEN}")
+    @Value("${BOT_TOKEN:${telegram.bot-token}}")
     private String botToken;
 
     public String getWebhookPath() {
