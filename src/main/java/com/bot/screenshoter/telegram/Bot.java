@@ -21,7 +21,7 @@ public class Bot extends SpringWebhookBot {
     private String botToken;
 
     @Autowired
-    UpdateHandler updateHandler;
+    private UpdateHandler updateHandler;
 
     public Bot(SetWebhook setWebhook) {
         super(setWebhook);
@@ -49,7 +49,7 @@ public class Bot extends SpringWebhookBot {
         }
     }
 
-    public boolean sendScreenshotAsDocument(SendDocument document) {
+    public boolean sendDocument(SendDocument document) {
         try {
             execute(document);
             return true;
@@ -59,7 +59,7 @@ public class Bot extends SpringWebhookBot {
         }
     }
 
-    public void sendBotAction(SendChatAction chatAction) {
+    public void sendChatAction(SendChatAction chatAction) {
         try {
             execute(chatAction);
         } catch (TelegramApiException e) {
