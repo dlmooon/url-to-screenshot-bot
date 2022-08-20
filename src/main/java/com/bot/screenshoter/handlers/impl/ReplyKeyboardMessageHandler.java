@@ -1,7 +1,7 @@
 package com.bot.screenshoter.handlers.impl;
 
 import com.bot.screenshoter.LocaleMessageService;
-import com.bot.screenshoter.MessageSender;
+import com.bot.screenshoter.TelegramSender;
 import com.bot.screenshoter.cache.BotStateCache;
 import com.bot.screenshoter.constants.BotStateEnum;
 import com.bot.screenshoter.handlers.Handler;
@@ -19,7 +19,7 @@ public class ReplyKeyboardMessageHandler implements Handler {
     @Autowired
     private BotStateCache stateCache;
     @Autowired
-    private MessageSender messageSender;
+    private TelegramSender telegramSender;
     @Autowired
     private InlineKeyboardMaker inlineKeyboardMaker;
 
@@ -57,13 +57,13 @@ public class ReplyKeyboardMessageHandler implements Handler {
 
         if (text.equals(localeMessage.getById(chatId, "button_take_screenshot"))) {
             stateCache.setUsersBotState(chatId, BotStateEnum.ASK_URL);
-            messageSender.send(chatId, "enter_url");
+            telegramSender.sendMessage(chatId, "enter_url");
         } else if (text.equals(localeMessage.getById(chatId, "button_about"))) {
             stateCache.setUsersBotState(chatId, BotStateEnum.SHOW_ABOUT);
-            messageSender.send(chatId, "about_bot");
+            telegramSender.sendMessage(chatId, "about_bot");
         } else if (text.equals(localeMessage.getById(chatId, "button_language"))) {
             stateCache.setUsersBotState(chatId, BotStateEnum.ASK_LANGUAGE);
-            messageSender.send(chatId, "choose_lang", inlineKeyboardMaker.getKeyboardForSelectLang());
+            telegramSender.sendMessage(chatId, "choose_lang", inlineKeyboardMaker.getKeyboardForSelectLang());
         }
     }
 }

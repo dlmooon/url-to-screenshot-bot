@@ -1,6 +1,6 @@
 package com.bot.screenshoter.handlers.impl;
 
-import com.bot.screenshoter.MessageSender;
+import com.bot.screenshoter.TelegramSender;
 import com.bot.screenshoter.cache.BotStateCache;
 import com.bot.screenshoter.cache.RequestDimensionCache;
 import com.bot.screenshoter.cache.RequestUrlCache;
@@ -30,7 +30,7 @@ public class MessageHandler implements Handler {
     @Autowired
     RequestDimensionCache dimensionCache;
     @Autowired
-    MessageSender messageSender;
+    TelegramSender telegramSender;
     @Autowired
     DimensionUtils dimensionUtils;
 
@@ -53,40 +53,40 @@ public class MessageHandler implements Handler {
         switch (botState) {
             case ASK_URL:
                 if (!isCorrectUrl(message.getText())) {
-                    messageSender.send(chatId, "invalid_url");
+                    telegramSender.sendMessage(chatId, "invalid_url");
                     break;
                 }
                 urlCache.addRequestUrl(chatId, message.getText());
 
                 stateCache.setUsersBotState(chatId, BotStateEnum.ASK_TYPE_SCREENSHOT);
-                messageSender.send(chatId, "select_screenshot_type", inlineKeyboardMaker.getKeyboardForSelectTypeScreenshot(chatId));
+                telegramSender.sendMessage(chatId, "select_screenshot_type", inlineKeyboardMaker.getKeyboardForSelectTypeScreenshot(chatId));
                 break;
 
             case ASK_DIMENSION:
                 if (dimensionUtils.isCorrectFormatOfDimension(message.getText())) {
                     Dimension dimension = dimensionUtils.getDimension(message.getText());
                     if (!dimensionUtils.isCorrectDimension(dimension)) {
-                        messageSender.send(chatId, "wrong_resolution");
+                        telegramSender.sendMessage(chatId, "wrong_resolution");
                         break;
                     }
                     dimensionCache.addRequestDimension(chatId, dimension);
 
                     stateCache.setUsersBotState(chatId, BotStateEnum.CONFIRM_ACTION);
-                    messageSender.send(chatId, "confirm_action",
+                    telegramSender.sendMessage(chatId, "confirm_action",
                             inlineKeyboardMaker.getKeyboardForConfirmOrCancel(chatId),
                             String.valueOf(dimension.getWidth()),
                             String.valueOf(dimension.getHeight()));
                 } else {
-                    messageSender.send(chatId, "invalid_resolution");
+                    telegramSender.sendMessage(chatId, "invalid_resolution");
                 }
                 break;
 
             case ASK_LANGUAGE:
-                messageSender.send(chatId, "choose_lang", inlineKeyboardMaker.getKeyboardForSelectLang());
+                telegramSender.sendMessage(chatId, "choose_lang", inlineKeyboardMaker.getKeyboardForSelectLang());
                 break;
 
             default:
-                messageSender.send(chatId, "dont_understand");
+                telegramSender.sendMessage(chatId, "dont_understand");
         }
     }
 

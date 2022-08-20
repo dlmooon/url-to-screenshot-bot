@@ -1,6 +1,6 @@
 package com.bot.screenshoter.handlers.impl;
 
-import com.bot.screenshoter.MessageSender;
+import com.bot.screenshoter.TelegramSender;
 import com.bot.screenshoter.handlers.Handler;
 import com.bot.screenshoter.keyboards.InlineKeyboardMaker;
 import com.bot.screenshoter.repository.UsersRepo;
@@ -19,7 +19,7 @@ public class CommandHandler implements Handler {
     private UsersRepo usersRepo;
 
     @Autowired
-    private MessageSender messageSender;
+    private TelegramSender telegramSender;
 
     @Override
     public boolean supports(Update update) {
@@ -40,15 +40,15 @@ public class CommandHandler implements Handler {
         switch (command) {
             case "/start":
                 usersRepo.registerOrUpdateIfExist(message.getFrom());
-                messageSender.send(chatId, "choose_lang", keyboardMaker.getKeyboardForSelectLang());
+                telegramSender.sendMessage(chatId, "choose_lang", keyboardMaker.getKeyboardForSelectLang());
                 break;
 
             case "/help":
-                messageSender.send(chatId, "help");
+                telegramSender.sendMessage(chatId, "help");
                 break;
 
             default:
-                messageSender.send(chatId, "unknown_command", command);
+                telegramSender.sendMessage(chatId, "unknown_command", command);
         }
     }
 }
