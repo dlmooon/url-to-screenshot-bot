@@ -49,16 +49,12 @@ public class TelegramSender {
     }
 
     public boolean sendDocument(String chatId, InputFile document) {
-        SendDocument sendDocument = new SendDocument();
-        sendDocument.setChatId(chatId);
-        sendDocument.setDocument(document);
+        SendDocument sendDocument = new SendDocument(chatId, document);
         return bot.sendDocument(sendDocument);
     }
 
     public void sendChatAction(String chatId, ActionType actionType) {
-        SendChatAction sendChatAction = new SendChatAction();
-        sendChatAction.setChatId(chatId);
-        sendChatAction.setAction(actionType);
+        SendChatAction sendChatAction = new SendChatAction(chatId, actionType.toString());
         bot.sendChatAction(sendChatAction);
     }
 
