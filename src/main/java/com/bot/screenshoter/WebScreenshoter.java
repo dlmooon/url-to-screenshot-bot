@@ -31,6 +31,7 @@ public class WebScreenshoter {
         driver.get(url);
         log.debug("Taking simple screenshot");
         Screenshot screenshot = new AShot().takeScreenshot(driver);
+        openDefaultPageAndClearData();
         return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
     }
 
@@ -39,6 +40,7 @@ public class WebScreenshoter {
         driver.get(url);
         log.debug("Taking long screenshot");
         Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10)).takeScreenshot(driver);
+        openDefaultPageAndClearData();
         return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
     }
 
@@ -50,18 +52,16 @@ public class WebScreenshoter {
         waitPageLoad();
         Screenshot screenshot = new AShot().takeScreenshot(driver);
         driver.manage().window().setSize(new Dimension(1920, 1080));
+        openDefaultPageAndClearData();
         return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
-    }
-
-    public synchronized File takeScreenshotWithScaling(String url, float dpr) {
-        log.info("take a screenshot with scaling");
-        driver.get(url);
-        Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.scaling(dpr)).takeScreenshot(driver);
-        return getFileFromBufferedImage(screenshot.getImage(), "scaling-screenshot");
     }
 
     public Object executeScript(String script) {
         return driver.executeScript(script);
+    }
+
+    private void openDefaultPageAndClearData() {
+        driver.get("about:blank");
     }
 
     @SneakyThrows
