@@ -15,6 +15,7 @@ import ru.yandex.qatools.ashot.Screenshot;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -31,7 +32,7 @@ public class WebScreenshoter {
         driver.get(url);
         log.debug("Taking simple screenshot");
         Screenshot screenshot = new AShot().takeScreenshot(driver);
-        openDefaultPageAndClearData();
+        clearDataAndOpenDefaultPage();
         return getFileFromBufferedImage(screenshot.getImage(), "simple-screenshot");
     }
 
@@ -40,7 +41,7 @@ public class WebScreenshoter {
         driver.get(url);
         log.debug("Taking long screenshot");
         Screenshot screenshot = new AShot().shootingStrategy(ShootingStrategies.viewportPasting(10)).takeScreenshot(driver);
-        openDefaultPageAndClearData();
+        clearDataAndOpenDefaultPage();
         return getFileFromBufferedImage(screenshot.getImage(), "long-screenshot");
     }
 
@@ -52,7 +53,7 @@ public class WebScreenshoter {
         waitPageLoad();
         Screenshot screenshot = new AShot().takeScreenshot(driver);
         driver.manage().window().setSize(new Dimension(1920, 1080));
-        openDefaultPageAndClearData();
+        clearDataAndOpenDefaultPage();
         return getFileFromBufferedImage(screenshot.getImage(), "custom-screenshot");
     }
 
@@ -60,7 +61,10 @@ public class WebScreenshoter {
         return driver.executeScript(script);
     }
 
-    private void openDefaultPageAndClearData() {
+    private void clearDataAndOpenDefaultPage() {
+        driver.getSessionStorage().clear();
+        driver.getLocalStorage().clear();
+        driver.manage().deleteAllCookies();
         driver.get("about:blank");
     }
 
@@ -109,6 +113,12 @@ public class WebScreenshoter {
         driver = new ChromeDriver(driverService, options);
 
         log.info("Web driver is prepared and running");
+    }
+
+    @PreDestroy
+    private void endWebDriverSession() {
+        driver.quit();
+        log.info("web driver session is end");
     }
 }
 
