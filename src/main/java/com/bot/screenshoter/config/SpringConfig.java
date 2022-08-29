@@ -1,6 +1,6 @@
 package com.bot.screenshoter.config;
 
-import com.bot.screenshoter.telegram.Bot;
+import com.bot.screenshoter.bot.TelegramBot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -20,8 +20,8 @@ public class SpringConfig {
     }
 
     @Bean
-    public Bot springWebhookBot(SetWebhook setWebhook) {
-        Bot bot = new Bot(setWebhook);
+    public TelegramBot springWebhookBot(SetWebhook setWebhook) {
+        TelegramBot bot = new TelegramBot(setWebhook);
 
         bot.setBotUsername(telegramBotConfig.getBotUsername());
         bot.setBotToken(telegramBotConfig.getBotToken());
