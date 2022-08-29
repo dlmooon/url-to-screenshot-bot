@@ -1,4 +1,4 @@
-package com.bot.screenshoter;
+package com.bot.screenshoter.services;
 
 import com.bot.screenshoter.repository.UsersBotLangRepo;
 import org.springframework.beans.factory.annotation.Autowired;
