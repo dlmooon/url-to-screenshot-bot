@@ -1,9 +1,9 @@
-package com.bot.screenshoter.handlers.impl;
+package com.bot.screenshoter.bot.handlers.impl;
 
-import com.bot.screenshoter.TelegramSender;
-import com.bot.screenshoter.handlers.Handler;
+import com.bot.screenshoter.bot.handlers.Handler;
 import com.bot.screenshoter.keyboards.InlineKeyboardMaker;
 import com.bot.screenshoter.repository.UsersRepo;
+import com.bot.screenshoter.services.TelegramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -14,12 +14,10 @@ public class CommandHandler implements Handler {
 
     @Autowired
     private InlineKeyboardMaker keyboardMaker;
-
     @Autowired
     private UsersRepo usersRepo;
-
     @Autowired
-    private TelegramSender telegramSender;
+    private TelegramService telegramService;
 
     @Override
     public boolean supports(Update update) {
@@ -40,15 +38,15 @@ public class CommandHandler implements Handler {
         switch (command) {
             case "/start":
                 usersRepo.registerOrUpdateIfExist(message.getFrom());
-                telegramSender.sendMessage(chatId, "choose_lang", keyboardMaker.getKeyboardForSelectLang());
+                telegramService.sendMessage(chatId, "choose_lang", keyboardMaker.getKeyboardForSelectLang());
                 break;
 
             case "/help":
-                telegramSender.sendMessage(chatId, "help");
+                telegramService.sendMessage(chatId, "help");
                 break;
 
             default:
-                telegramSender.sendMessage(chatId, "unknown_command", command);
+                telegramService.sendMessage(chatId, "unknown_command", command);
         }
     }
 }
