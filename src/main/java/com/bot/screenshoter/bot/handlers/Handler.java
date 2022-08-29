@@ -1,4 +1,4 @@
-package com.bot.screenshoter.handlers;
+package com.bot.screenshoter.bot.handlers;
 
 import org.telegram.telegrambots.meta.api.objects.Update;
 
