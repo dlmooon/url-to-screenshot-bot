@@ -1,11 +1,11 @@
-package com.bot.screenshoter.handlers.impl;
+package com.bot.screenshoter.bot.handlers.impl;
 
-import com.bot.screenshoter.LocaleMessageService;
-import com.bot.screenshoter.TelegramSender;
+import com.bot.screenshoter.bot.handlers.Handler;
 import com.bot.screenshoter.cache.BotStateCache;
 import com.bot.screenshoter.constants.BotStateEnum;
-import com.bot.screenshoter.handlers.Handler;
 import com.bot.screenshoter.keyboards.InlineKeyboardMaker;
+import com.bot.screenshoter.services.LocaleMessageService;
+import com.bot.screenshoter.services.TelegramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -19,7 +19,7 @@ public class ReplyKeyboardMessageHandler implements Handler {
     @Autowired
     private BotStateCache stateCache;
     @Autowired
-    private TelegramSender telegramSender;
+    private TelegramService telegramService;
     @Autowired
     private InlineKeyboardMaker inlineKeyboardMaker;
 
@@ -57,13 +57,13 @@ public class ReplyKeyboardMessageHandler implements Handler {
 
         if (text.equals(localeMessage.getById(chatId, "button_take_screenshot"))) {
             stateCache.setUsersBotState(chatId, BotStateEnum.ASK_URL);
-            telegramSender.sendMessage(chatId, "enter_url");
+            telegramService.sendMessage(chatId, "enter_url");
         } else if (text.equals(localeMessage.getById(chatId, "button_about"))) {
             stateCache.setUsersBotState(chatId, BotStateEnum.SHOW_ABOUT);
-            telegramSender.sendMessage(chatId, "about_bot");
+            telegramService.sendMessage(chatId, "about_bot");
         } else if (text.equals(localeMessage.getById(chatId, "button_language"))) {
             stateCache.setUsersBotState(chatId, BotStateEnum.ASK_LANGUAGE);
-            telegramSender.sendMessage(chatId, "choose_lang", inlineKeyboardMaker.getKeyboardForSelectLang());
+            telegramService.sendMessage(chatId, "choose_lang", inlineKeyboardMaker.getKeyboardForSelectLang());
         }
     }
 }
