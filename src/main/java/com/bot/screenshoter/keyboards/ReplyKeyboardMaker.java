@@ -1,6 +1,6 @@
 package com.bot.screenshoter.keyboards;
 
-import com.bot.screenshoter.LocaleMessageService;
+import com.bot.screenshoter.services.LocaleMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
