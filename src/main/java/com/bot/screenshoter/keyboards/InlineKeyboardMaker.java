@@ -1,7 +1,7 @@
 package com.bot.screenshoter.keyboards;
 
-import com.bot.screenshoter.LocaleMessageService;
 import com.bot.screenshoter.constants.InlineButtonEnum;
+import com.bot.screenshoter.services.LocaleMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
@@ -33,7 +33,7 @@ public class InlineKeyboardMaker {
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
 
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        keyboard.add(getButton(localeMessage.getById(chatId, "button_confirm"), InlineButtonEnum.CONFIRM_BUTTON.name()));
+        keyboard.add(getButton(localeMessage.getById(chatId, "button_confirm"), InlineButtonEnum.CONFIRM_CUSTOM_SCREENSHOT_BUTTON.name()));
         keyboard.add(getButton(localeMessage.getById(chatId, "button_cancel"), InlineButtonEnum.CANCEL_BUTTON.name()));
 
         keyboardMarkup.setKeyboard(keyboard);
