@@ -1,4 +1,4 @@
-package com.bot.screenshoter.telegram;
+package com.bot.screenshoter.bot;
 
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class WebhookController {
 
     @Autowired
-    private final Bot bot;
+    private final TelegramBot bot;
 
     @PostMapping("/")
     public BotApiMethod<?> onUpdateReceived(@RequestBody Update update) {
