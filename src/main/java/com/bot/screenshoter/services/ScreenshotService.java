@@ -2,10 +2,10 @@ package com.bot.screenshoter.services;
 
 import com.bot.screenshoter.services.templates.ScreenshotTemplate;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.WebDriverException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 
 import java.io.File;
