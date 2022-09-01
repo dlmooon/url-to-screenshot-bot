@@ -1,15 +1,18 @@
 package com.bot.screenshoter.bot;
 
 import com.bot.screenshoter.bot.handlers.impl.UpdateHandler;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.updates.SetWebhook;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.starter.SpringWebhookBot;
 
-@Slf4j
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class TelegramBot extends SpringWebhookBot {
+
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 
     private String botWebhookPath;
     private String botUsername;
@@ -24,7 +27,7 @@ public class TelegramBot extends SpringWebhookBot {
 
     @Override
     public BotApiMethod<?> onWebhookUpdateReceived(Update update) {
-        new Thread(() -> updateHandler.handle(update)).start();
+        executorService.submit(() -> updateHandler.handle(update));
         return null;
     }
 
