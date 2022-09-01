@@ -5,12 +5,9 @@ import com.bot.screenshoter.utils.FileUtils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.output.NullOutputStream;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.service.DriverService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.qatools.ashot.AShot;
@@ -24,8 +21,10 @@ import java.io.File;
 @Service
 public class WebScreenshoter {
 
+    private static final int DEFAULT_PAGE_LOAD_TIMEOUT = 1000;
+
     @Autowired
-    FileUtils fileUtils;
+    private FileUtils fileUtils;
 
     private ChromeDriver driver;
 
@@ -47,7 +46,9 @@ public class WebScreenshoter {
 
     @SneakyThrows
     private void waitPageLoad(Integer seconds) {
-        if (seconds != 0) {
+        if (seconds == 0) {
+            Thread.sleep(DEFAULT_PAGE_LOAD_TIMEOUT);
+        } else {
             Thread.sleep(seconds * 1000);
         }
     }
@@ -55,10 +56,6 @@ public class WebScreenshoter {
     @PostConstruct
     private void prepareAndRunWebDriver() {
         WebDriverManager.chromedriver().setup();
-
-        DriverService.Builder<ChromeDriverService, ChromeDriverService.Builder> serviceBuilder = new ChromeDriverService.Builder();
-        ChromeDriverService driverService = serviceBuilder.build();
-        driverService.sendOutputTo(NullOutputStream.NULL_OUTPUT_STREAM);
 
         ChromeOptions options = new ChromeOptions();
 
@@ -76,13 +73,14 @@ public class WebScreenshoter {
         options.addArguments("--disable-features=VizDisplayCompositor");
         options.addArguments("window-size=1920,1080");
 
-        driver = new ChromeDriver(driverService, options);
+        driver = new ChromeDriver(options);
 
         log.info("Web driver is prepared and running");
     }
 
     @PreDestroy
     private void endWebDriverSession() {
+        driver.close();
         driver.quit();
         log.info("web driver session is end");
     }
