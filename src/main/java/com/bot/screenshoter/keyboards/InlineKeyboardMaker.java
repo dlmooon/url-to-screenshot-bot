@@ -22,7 +22,7 @@ public class InlineKeyboardMaker {
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
         keyboard.add(getButton(localeMessage.getById(chatId, "button_simple_screenshot"), InlineButtonEnum.SIMPLE_SCREENSHOT_BUTTON.name()));
         keyboard.add(getButton(localeMessage.getById(chatId, "button_long_screenshot"), InlineButtonEnum.LONG_SCREENSHOT_BUTTON.name()));
-        keyboard.add(getButton(localeMessage.getById(chatId, "button_custom_screenshot"), InlineButtonEnum.CUSTOM_SCREENSHOT_BUTTON.name()));
+        keyboard.add(getButton(localeMessage.getById(chatId, "button_custom_screenshot"), InlineButtonEnum.SET_UP_CUSTOM_SCREENSHOT_BUTTON.name()));
 
         keyboardMarkup.setKeyboard(keyboard);
 
@@ -33,7 +33,19 @@ public class InlineKeyboardMaker {
         InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
 
         List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
-        keyboard.add(getButton(localeMessage.getById(chatId, "button_confirm"), InlineButtonEnum.CONFIRM_CUSTOM_SCREENSHOT_BUTTON.name()));
+        keyboard.add(getButton(localeMessage.getById(chatId, "button_confirm"), InlineButtonEnum.CONFIRM_BUTTON.name()));
+        keyboard.add(getButton(localeMessage.getById(chatId, "button_cancel"), InlineButtonEnum.CANCEL_BUTTON.name()));
+
+        keyboardMarkup.setKeyboard(keyboard);
+
+        return keyboardMarkup;
+    }
+
+    public InlineKeyboardMarkup getKeyboardForTakeCustomScreenshotOrCancel(String chatId) {
+        InlineKeyboardMarkup keyboardMarkup = new InlineKeyboardMarkup();
+
+        List<List<InlineKeyboardButton>> keyboard = new ArrayList<>();
+        keyboard.add(getButton(localeMessage.getById(chatId, "button_confirm"), InlineButtonEnum.TAKE_CUSTOM_SCREENSHOT_BUTTON.name()));
         keyboard.add(getButton(localeMessage.getById(chatId, "button_cancel"), InlineButtonEnum.CANCEL_BUTTON.name()));
 
         keyboardMarkup.setKeyboard(keyboard);
