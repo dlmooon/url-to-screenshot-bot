@@ -2,6 +2,7 @@ package com.bot.screenshoter.services.actions.impl;
 
 import com.bot.screenshoter.cache.BotStateCache;
 import com.bot.screenshoter.cache.RequestDimensionCache;
+import com.bot.screenshoter.cache.RequestPageLoadTimeoutCache;
 import com.bot.screenshoter.cache.RequestUrlCache;
 import com.bot.screenshoter.constants.BotStateEnum;
 import com.bot.screenshoter.constants.InlineButtonEnum;
@@ -30,15 +31,25 @@ public class SelectScreenshotTypeAction implements InlineKeyboardAction {
     @Autowired
     private BotStateCache stateCache;
     @Autowired
+    private RequestDimensionCache dimensionCache;
+    @Autowired
+    private RequestPageLoadTimeoutCache timeoutCache;
+    @Autowired
     private TelegramService telegramService;
     @Autowired
     private UrlHistoryRepo urlHistoryRepo;
     @Autowired
     private ScreenshotService screenshotService;
-    @Autowired
-    private RequestDimensionCache dimensionCache;
 
     private String chatId;
+
+    @Override
+    public boolean supports(InlineButtonEnum button) {
+        return button.equals(InlineButtonEnum.SIMPLE_SCREENSHOT_BUTTON) ||
+                button.equals(InlineButtonEnum.LONG_SCREENSHOT_BUTTON) ||
+                button.equals(InlineButtonEnum.SET_UP_CUSTOM_SCREENSHOT_BUTTON) ||
+                button.equals(InlineButtonEnum.TAKE_CUSTOM_SCREENSHOT_BUTTON);
+    }
 
     @Override
     public void handle(String chatId, InlineButtonEnum button) {
@@ -59,12 +70,12 @@ public class SelectScreenshotTypeAction implements InlineKeyboardAction {
                 file = getScreenshot(new LongScreenshot(url));
                 break;
 
-            case CONFIRM_CUSTOM_SCREENSHOT_BUTTON:
+            case TAKE_CUSTOM_SCREENSHOT_BUTTON:
                 url_id = saveInfo(url, "custom");
-                file = getScreenshot(new CustomScreenshot(url, dimensionCache.getRequestDimension(chatId), 0));
+                file = getScreenshot(new CustomScreenshot(url, dimensionCache.getRequestDimension(chatId), timeoutCache.getRequestPageLoadTimeout(chatId)));
                 break;
 
-            case CUSTOM_SCREENSHOT_BUTTON:
+            case SET_UP_CUSTOM_SCREENSHOT_BUTTON:
                 stateCache.setUsersBotState(chatId, BotStateEnum.ASK_DIMENSION);
                 telegramService.sendMessage(chatId, "enter_resolution");
                 return;
