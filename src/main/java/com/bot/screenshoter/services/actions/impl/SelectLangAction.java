@@ -23,6 +23,12 @@ public class SelectLangAction implements InlineKeyboardAction {
     private BotStateCache stateCache;
 
     @Override
+    public boolean supports(InlineButtonEnum button) {
+        return button.equals(InlineButtonEnum.RUSSIA_LANG_BUTTON) ||
+                button.equals(InlineButtonEnum.ENGLISH_LANG_BUTTON);
+    }
+
+    @Override
     public void handle(String chatId, InlineButtonEnum button) {
         switch (button) {
             case RUSSIA_LANG_BUTTON:
