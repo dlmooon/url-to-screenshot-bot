@@ -1,6 +1,6 @@
-package com.bot.screenshoter.services;
+package com.bot.screenshoter.screenshoter;
 
-import com.bot.screenshoter.services.templates.ScreenshotTemplate;
+import com.bot.screenshoter.screenshoter.templates.ScreenshotTemplate;
 import com.bot.screenshoter.utils.FileUtils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import lombok.SneakyThrows;
@@ -33,15 +33,7 @@ public class WebScreenshoter {
         driver.manage().window().setSize(screenshotTemplate.dimension());
         waitPageLoad(screenshotTemplate.pageLoadTimeout());
         Screenshot screenshot = new AShot().shootingStrategy(screenshotTemplate.shootingStrategy()).takeScreenshot(driver);
-        clearDataAndOpenDefaultPage();
         return fileUtils.getFileFromBufferedImage(screenshot.getImage(), screenshotTemplate.name());
-    }
-
-    private void clearDataAndOpenDefaultPage() {
-        driver.getSessionStorage().clear();
-        driver.getLocalStorage().clear();
-        driver.manage().deleteAllCookies();
-        driver.get("about:blank");
     }
 
     @SneakyThrows
