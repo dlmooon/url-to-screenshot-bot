@@ -1,20 +1,16 @@
-package com.bot.screenshoter.services.templates.impl;
+package com.bot.screenshoter.screenshoter.templates.impl;
 
-import com.bot.screenshoter.services.templates.ScreenshotTemplate;
+import com.bot.screenshoter.screenshoter.templates.ScreenshotTemplate;
 import org.openqa.selenium.Dimension;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategy;
 
-public class CustomScreenshot implements ScreenshotTemplate {
+public class SimpleScreenshot implements ScreenshotTemplate {
 
     private final String url;
-    private final Dimension dimension;
-    private final Integer pageLoadTimeout;
 
-    public CustomScreenshot(String url, Dimension dimension, Integer pageLoadTimeout) {
+    public SimpleScreenshot(String url) {
         this.url = url;
-        this.dimension = dimension;
-        this.pageLoadTimeout = pageLoadTimeout;
     }
 
     @Override
@@ -24,17 +20,17 @@ public class CustomScreenshot implements ScreenshotTemplate {
 
     @Override
     public Dimension dimension() {
-        return dimension;
+        return new Dimension(1920, 1080);
     }
 
     @Override
     public String name() {
-        return "custom-screenshot";
+        return "simple-screenshot";
     }
 
     @Override
     public int pageLoadTimeout() {
-        return pageLoadTimeout;
+        return 0;
     }
 
     @Override

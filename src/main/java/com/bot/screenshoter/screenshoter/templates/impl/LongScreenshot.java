@@ -1,6 +1,6 @@
-package com.bot.screenshoter.services.templates.impl;
+package com.bot.screenshoter.screenshoter.templates.impl;
 
-import com.bot.screenshoter.services.templates.ScreenshotTemplate;
+import com.bot.screenshoter.screenshoter.templates.ScreenshotTemplate;
 import org.openqa.selenium.Dimension;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategy;

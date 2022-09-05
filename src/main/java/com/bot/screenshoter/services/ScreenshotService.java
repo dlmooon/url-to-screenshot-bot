@@ -1,6 +1,7 @@
 package com.bot.screenshoter.services;
 
-import com.bot.screenshoter.services.templates.ScreenshotTemplate;
+import com.bot.screenshoter.screenshoter.WebScreenshoter;
+import com.bot.screenshoter.screenshoter.templates.ScreenshotTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriverException;
 import org.springframework.beans.factory.annotation.Autowired;
