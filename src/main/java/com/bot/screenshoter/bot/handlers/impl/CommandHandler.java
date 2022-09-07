@@ -45,7 +45,7 @@ public class CommandHandler implements Handler {
                 break;
 
             case "/help":
-                telegramService.sendPhoto(chatId, "help", new InputFile(new File("botpic.png")));
+                telegramService.sendPhoto(chatId, "help", new InputFile(new File("src/main/resources/botpic.png")));
                 break;
 
             default:
