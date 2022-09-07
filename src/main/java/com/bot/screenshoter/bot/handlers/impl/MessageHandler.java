@@ -3,7 +3,6 @@ package com.bot.screenshoter.bot.handlers.impl;
 import com.bot.screenshoter.bot.handlers.Handler;
 import com.bot.screenshoter.cache.BotStateCache;
 import com.bot.screenshoter.cache.RequestDimensionCache;
-import com.bot.screenshoter.cache.RequestPageLoadTimeoutCache;
 import com.bot.screenshoter.cache.RequestUrlCache;
 import com.bot.screenshoter.constants.BotStateEnum;
 import com.bot.screenshoter.keyboards.InlineKeyboardMaker;
@@ -23,8 +22,6 @@ public class MessageHandler implements Handler {
     InlineKeyboardMaker inlineKeyboardMaker;
     @Autowired
     BotStateCache stateCache;
-    @Autowired
-    RequestPageLoadTimeoutCache timeoutCache;
     @Autowired
     RequestUrlCache urlCache;
     @Autowired
@@ -72,25 +69,12 @@ public class MessageHandler implements Handler {
                         break;
                     }
                     dimensionCache.addRequestDimension(chatId, dimension);
-                    telegramService.sendMessage(chatId, "add_page_load_timeout?", inlineKeyboardMaker.getKeyboardForConfirmOrCancel(chatId));
-                } else {
-                    telegramService.sendMessage(chatId, "invalid_resolution");
-                }
-                break;
-
-            case ASK_PAGE_LOAD_TIMEOUT:
-                int timeout = Integer.parseInt(message.getText());
-                if (timeout >= 0 && timeout <= 5) {
-                    timeoutCache.addRequestPageLoadTimeout(chatId, timeout);
-                    stateCache.setUsersBotState(chatId, BotStateEnum.CONFIRM_ACTION);
-                    Dimension dimension = dimensionCache.getRequestDimension(chatId);
                     telegramService.sendMessage(chatId, "confirm_action",
                             inlineKeyboardMaker.getKeyboardForTakeCustomScreenshotOrCancel(chatId),
                             String.valueOf(dimension.getWidth()),
-                            String.valueOf(dimension.getHeight()),
-                            String.valueOf(timeout));
+                            String.valueOf(dimension.getHeight()));
                 } else {
-                    telegramService.sendMessage(chatId, "wrong_page_load_timeout");
+                    telegramService.sendMessage(chatId, "invalid_resolution");
                 }
                 break;
 
