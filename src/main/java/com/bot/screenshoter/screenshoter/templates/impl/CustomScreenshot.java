@@ -1,5 +1,6 @@
 package com.bot.screenshoter.screenshoter.templates.impl;
 
+import com.bot.screenshoter.constants.ScreenshotTypeEnum;
 import com.bot.screenshoter.screenshoter.templates.ScreenshotTemplate;
 import org.openqa.selenium.Dimension;
 import ru.yandex.qatools.ashot.shooting.ShootingStrategies;
@@ -9,12 +10,10 @@ public class CustomScreenshot implements ScreenshotTemplate {
 
     private final String url;
     private final Dimension dimension;
-    private final Integer pageLoadTimeout;
 
-    public CustomScreenshot(String url, Dimension dimension, Integer pageLoadTimeout) {
+    public CustomScreenshot(String url, Dimension dimension) {
         this.url = url;
         this.dimension = dimension;
-        this.pageLoadTimeout = pageLoadTimeout;
     }
 
     @Override
@@ -23,18 +22,18 @@ public class CustomScreenshot implements ScreenshotTemplate {
     }
 
     @Override
-    public Dimension dimension() {
-        return dimension;
-    }
-
-    @Override
     public String name() {
         return "custom-screenshot";
     }
 
     @Override
-    public int pageLoadTimeout() {
-        return pageLoadTimeout;
+    public Dimension dimension() {
+        return dimension;
+    }
+
+    @Override
+    public ScreenshotTypeEnum type() {
+        return ScreenshotTypeEnum.CUSTOM;
     }
 
     @Override
