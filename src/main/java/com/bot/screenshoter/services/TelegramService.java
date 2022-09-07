@@ -10,6 +10,7 @@ import org.telegram.telegrambots.meta.api.methods.ActionType;
 import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
 import org.telegram.telegrambots.meta.api.methods.send.SendDocument;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
@@ -83,6 +84,19 @@ public class TelegramService extends DefaultAbsSender {
         } catch (TelegramApiException e) {
             log.warn("Failed to send document", e);
             return false;
+        }
+    }
+
+    public void sendPhoto(String chatId, String text, InputFile document) {
+        SendPhoto sendPhoto = new SendPhoto(chatId, document);
+        sendPhoto.setParseMode("markdown");
+        String localeText = localeService.getById(chatId, text);
+        sendPhoto.setCaption(localeText);
+
+        try {
+            execute(sendPhoto);
+        } catch (TelegramApiException e) {
+            log.warn("Failed to send photo", e);
         }
     }
 
