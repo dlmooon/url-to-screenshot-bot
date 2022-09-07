@@ -19,7 +19,7 @@ public class DimensionUtils {
 
     public boolean isCorrectDimension(Dimension dimension) {
         int min = 1;
-        int max = 6000;
+        int max = 5000;
         return dimension.getWidth() >= min &&
                 dimension.getHeight() >= min &&
                 dimension.getWidth() <= max &&
