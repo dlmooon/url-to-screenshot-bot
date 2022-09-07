@@ -1,5 +1,6 @@
 package com.bot.screenshoter.screenshoter;
 
+import com.bot.screenshoter.constants.ScreenshotTypeEnum;
 import com.bot.screenshoter.screenshoter.templates.ScreenshotTemplate;
 import com.bot.screenshoter.utils.FileUtils;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -21,7 +22,8 @@ import java.io.File;
 @Service
 public class WebScreenshoter {
 
-    private static final int DEFAULT_PAGE_LOAD_TIMEOUT = 1000;
+    private static final int DEFAULT_PAGE_LOAD_TIMEOUT = 1500;
+    private static final int CUSTOM_PAGE_LOAD_TIMEOUT = 3500;
 
     @Autowired
     private FileUtils fileUtils;
@@ -31,17 +33,17 @@ public class WebScreenshoter {
     public synchronized File takeScreenshot(ScreenshotTemplate screenshotTemplate) throws WebDriverException {
         driver.get(screenshotTemplate.url());
         driver.manage().window().setSize(screenshotTemplate.dimension());
-        waitPageLoad(screenshotTemplate.pageLoadTimeout());
+        waitPageLoad(screenshotTemplate.type());
         Screenshot screenshot = new AShot().shootingStrategy(screenshotTemplate.shootingStrategy()).takeScreenshot(driver);
         return fileUtils.getFileFromBufferedImage(screenshot.getImage(), screenshotTemplate.name());
     }
 
     @SneakyThrows
-    private void waitPageLoad(Integer seconds) {
-        if (seconds == 0) {
-            Thread.sleep(DEFAULT_PAGE_LOAD_TIMEOUT);
+    private void waitPageLoad(ScreenshotTypeEnum type) {
+        if (type.equals(ScreenshotTypeEnum.CUSTOM)) {
+            Thread.sleep(CUSTOM_PAGE_LOAD_TIMEOUT);
         } else {
-            Thread.sleep(seconds * 1000);
+            Thread.sleep(DEFAULT_PAGE_LOAD_TIMEOUT);
         }
     }
 
