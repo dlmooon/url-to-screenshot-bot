@@ -31,10 +31,10 @@ public class ReplyKeyboardMessageHandler implements Handler {
 
         String text = update.getMessage().getText();
         switch (text) {
-            case "\uD83D\uDCF7 Сделать скриншот \uD83D\uDCF7":
+            case "\uD83D\uDCF7 Скриншот \uD83D\uDCF7":
             case "\uD83D\uDE80 О боте":
             case "Язык \uD83D\uDD01":
-            case "\uD83D\uDCF7 Take a screenshot \uD83D\uDCF7":
+            case "\uD83D\uDCF7 Screenshot \uD83D\uDCF7":
             case "\uD83D\uDE80 About bot":
             case "Language \uD83D\uDD01":
                 return true;
