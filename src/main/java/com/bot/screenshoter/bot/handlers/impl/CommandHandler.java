@@ -6,8 +6,11 @@ import com.bot.screenshoter.repository.UsersRepo;
 import com.bot.screenshoter.services.TelegramService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+
+import java.io.File;
 
 @Service
 public class CommandHandler implements Handler {
@@ -42,7 +45,7 @@ public class CommandHandler implements Handler {
                 break;
 
             case "/help":
-                telegramService.sendMessage(chatId, "help");
+                telegramService.sendPhoto(chatId, "help", new InputFile(new File("botpic.png")));
                 break;
 
             default:
