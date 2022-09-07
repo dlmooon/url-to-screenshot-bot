@@ -2,18 +2,17 @@ package com.bot.screenshoter.services.actions.impl;
 
 import com.bot.screenshoter.cache.BotStateCache;
 import com.bot.screenshoter.cache.RequestDimensionCache;
-import com.bot.screenshoter.cache.RequestPageLoadTimeoutCache;
 import com.bot.screenshoter.cache.RequestUrlCache;
 import com.bot.screenshoter.constants.BotStateEnum;
 import com.bot.screenshoter.constants.InlineButtonEnum;
 import com.bot.screenshoter.repository.UrlHistoryRepo;
-import com.bot.screenshoter.services.ScreenshotService;
-import com.bot.screenshoter.services.TelegramService;
-import com.bot.screenshoter.services.actions.InlineKeyboardAction;
 import com.bot.screenshoter.screenshoter.templates.ScreenshotTemplate;
 import com.bot.screenshoter.screenshoter.templates.impl.CustomScreenshot;
 import com.bot.screenshoter.screenshoter.templates.impl.LongScreenshot;
 import com.bot.screenshoter.screenshoter.templates.impl.SimpleScreenshot;
+import com.bot.screenshoter.services.ScreenshotService;
+import com.bot.screenshoter.services.TelegramService;
+import com.bot.screenshoter.services.actions.InlineKeyboardAction;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.WebDriverException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +31,6 @@ public class SelectScreenshotTypeAction implements InlineKeyboardAction {
     private BotStateCache stateCache;
     @Autowired
     private RequestDimensionCache dimensionCache;
-    @Autowired
-    private RequestPageLoadTimeoutCache timeoutCache;
     @Autowired
     private TelegramService telegramService;
     @Autowired
@@ -71,8 +68,9 @@ public class SelectScreenshotTypeAction implements InlineKeyboardAction {
                 break;
 
             case TAKE_CUSTOM_SCREENSHOT_BUTTON:
+                telegramService.sendMessage(chatId, "please_wait");
                 url_id = saveInfo(url, "custom");
-                file = getScreenshot(new CustomScreenshot(url, dimensionCache.getRequestDimension(chatId), timeoutCache.getRequestPageLoadTimeout(chatId)));
+                file = getScreenshot(new CustomScreenshot(url, dimensionCache.getRequestDimension(chatId)));
                 break;
 
             case SET_UP_CUSTOM_SCREENSHOT_BUTTON:
