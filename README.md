@@ -11,8 +11,8 @@ Take high-resolution screenshots of any website 🔥
 [@URL_To_Screenshot_Bot](https://t.me/url_to_screenshot_bot)
 
 ## Screenshots
-<img src="https://user-images.githubusercontent.com/84851967/189976581-1e363d31-9ad1-4e5e-a690-b8f68bdb2a01.jpg" width="30%" align="left" />
-<img src="https://user-images.githubusercontent.com/84851967/189976607-b9772aa4-1b5e-460b-bb47-382c1e3de3bc.jpg" width="30%" align="right" />
+<img src="https://user-images.githubusercontent.com/84851967/191008592-3074e7f7-8334-4b3b-97a3-e74de37a3420.jpg" width="28%" align="left" />
+<img src="https://user-images.githubusercontent.com/84851967/191008603-2faccf76-4bb7-4192-8321-c395ad09fb12.jpg" width="28%" align="right" />
 <div align="center"> 
-    <img src="https://user-images.githubusercontent.com/84851967/189976592-a1811393-8489-4d58-9d2e-6638e6c65b4f.jpg" width="30%" align="center" />
+    <img src="https://user-images.githubusercontent.com/84851967/191008587-c1289162-4d68-4260-966f-8cb8a5571aa7.jpg" width="28%" align="center" />
 </div>
