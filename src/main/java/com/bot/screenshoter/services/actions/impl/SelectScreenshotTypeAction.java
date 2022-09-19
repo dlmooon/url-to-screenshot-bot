@@ -5,6 +5,7 @@ import com.bot.screenshoter.cache.RequestDimensionCache;
 import com.bot.screenshoter.cache.RequestUrlCache;
 import com.bot.screenshoter.constants.BotStateEnum;
 import com.bot.screenshoter.constants.InlineButtonEnum;
+import com.bot.screenshoter.constants.ScreenshotTypeEnum;
 import com.bot.screenshoter.repository.UrlHistoryRepo;
 import com.bot.screenshoter.screenshoter.templates.ScreenshotTemplate;
 import com.bot.screenshoter.screenshoter.templates.impl.CustomScreenshot;
@@ -38,8 +39,6 @@ public class SelectScreenshotTypeAction implements InlineKeyboardAction {
     @Autowired
     private ScreenshotService screenshotService;
 
-    private String chatId;
-
     @Override
     public boolean supports(InlineButtonEnum button) {
         return button.equals(InlineButtonEnum.SIMPLE_SCREENSHOT_BUTTON) ||
@@ -50,7 +49,6 @@ public class SelectScreenshotTypeAction implements InlineKeyboardAction {
 
     @Override
     public void handle(String chatId, InlineButtonEnum button) {
-        this.chatId = chatId;
         stateCache.setUsersBotState(chatId, BotStateEnum.TAKING_SCREENSHOT);
         String url = urlCache.getRequestUrl(chatId);
         Long url_id = null;
@@ -58,19 +56,19 @@ public class SelectScreenshotTypeAction implements InlineKeyboardAction {
 
         switch (button) {
             case SIMPLE_SCREENSHOT_BUTTON:
-                url_id = saveInfo(url, "simple");
-                file = getScreenshot(new SimpleScreenshot(url));
+                url_id = saveInfo(chatId, url, ScreenshotTypeEnum.SIMPLE);
+                file = getScreenshot(chatId, new SimpleScreenshot(url));
                 break;
 
             case LONG_SCREENSHOT_BUTTON:
-                url_id = saveInfo(url, "long");
-                file = getScreenshot(new LongScreenshot(url));
+                url_id = saveInfo(chatId, url, ScreenshotTypeEnum.LONG);
+                file = getScreenshot(chatId, new LongScreenshot(url));
                 break;
 
             case TAKE_CUSTOM_SCREENSHOT_BUTTON:
                 telegramService.sendMessage(chatId, "please_wait");
-                url_id = saveInfo(url, "custom");
-                file = getScreenshot(new CustomScreenshot(url, dimensionCache.getRequestDimension(chatId)));
+                url_id = saveInfo(chatId, url, ScreenshotTypeEnum.CUSTOM);
+                file = getScreenshot(chatId, new CustomScreenshot(url, dimensionCache.getRequestDimension(chatId)));
                 break;
 
             case SET_UP_CUSTOM_SCREENSHOT_BUTTON:
@@ -89,7 +87,7 @@ public class SelectScreenshotTypeAction implements InlineKeyboardAction {
         }
     }
 
-    private InputFile getScreenshot(ScreenshotTemplate template) {
+    private InputFile getScreenshot(String chatId, ScreenshotTemplate template) {
         try {
             return screenshotService.getScreenshot(template);
         } catch (WebDriverException e) {
@@ -98,9 +96,9 @@ public class SelectScreenshotTypeAction implements InlineKeyboardAction {
         }
     }
 
-    private Long saveInfo(String url, String type) {
+    private Long saveInfo(String chatId, String url, ScreenshotTypeEnum type) {
         try {
-            Long url_id = urlHistoryRepo.addUrl(url, type, Long.parseLong(chatId));
+            Long url_id = urlHistoryRepo.addUrl(url, type.getName(), Long.parseLong(chatId));
             return url_id;
         } catch (DataIntegrityViolationException e) {
             log.warn("User not registered", e);
